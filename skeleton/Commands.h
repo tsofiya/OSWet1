@@ -2,6 +2,7 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
+#include <cstring>
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
@@ -81,8 +82,11 @@ class QuitCommand : public BuiltInCommand {
 class CommandsHistory {
  protected:
   class CommandHistoryEntry {
-	  // TODO: Add your data members
+  public:
+      CommandHistoryEntry(int seq, char*comm);
+      ~CommandHistoryEntry();
   };
+
  // TODO: Add your data members
  public:
   CommandsHistory();
@@ -163,19 +167,23 @@ class SmallShell {
  private:
   // TODO: Add your data members
   SmallShell();
+  CommandsHistory history;
+  JobsList jobs;
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
   void operator=(SmallShell const&)  = delete; // disable = operator
   static SmallShell& getInstance() // make SmallShell singleton
   {
-    static SmallShell instance; // Guaranteed to be destroyed.
-    // Instantiated on first use.
-    return instance;
+      static SmallShell instance; // Guaranteed to be destroyed.
+      // Instantiated on first use.
+      return instance;
   }
+
   ~SmallShell();
   void executeCommand(const char* cmd_line);
   // TODO: add extra methods as needed
+
 };
 
 #endif //SMASH_COMMAND_H_

@@ -67,9 +67,6 @@ void _removeBackgroundSign(char* cmd_line) {
 // TODO: Add your implementation for classes in Commands.h 
 
 SmallShell::SmallShell() {
-    while(1){//TODO: When quit kill is used, fix this.
-
-    }
 }
 
 SmallShell::~SmallShell() {
@@ -81,17 +78,29 @@ SmallShell::~SmallShell() {
 */
 Command * SmallShell::CreateCommand(const char* cmd_line) {
 	// For example:
-/*
+
   string cmd_s = string(cmd_line);
   if (cmd_s.find("pwd") == 0) {
     return new GetCurrDirCommand(cmd_line);
   }
-  else if ...
-  .....
-  else {
-    return new ExternalCommand(cmd_line);
-  }
-  */
+  else if (cmd_s.find("cd"))
+      return new ChangeDirCommand(cmd_line);
+  else if(cmd_s.find("history"))
+      return new HistoryCommand(cmd_line, *history);
+  else if(cmd_s.find("jobs"))
+      return new JobsCommand(cmd_line, *jobs);
+  else if(cmd_s.find("kill"))
+      return new KillCommand(cmd_line, *jobs);
+  else if(cmd_s.find("showpid"))
+      return new ShowPidCommand(cmd_line);
+  else if(cmd_s.find("fg"))
+      return new ForegroundCommand(cmd_line, *jobs);
+  else if(cmd_s.find("bg"))
+      return new BackgroundCommand(cmd_line, *jobs);
+  else if(cmd_s.find("quit"))
+      return new QuitCommand(cmd_line, *jobs);
+  else if(cmd_s.find("cp"))
+      return new CopyCommand(cmd_line);
   return nullptr;
 }
 
@@ -102,3 +111,69 @@ void SmallShell::executeCommand(const char *cmd_line) {
   // cmd->execute();
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
+
+class CommandsHistory {
+protected:
+    class CommandHistoryEntry {
+    private:
+        int seqNum;
+        char* command;
+    public:
+        CommandHistoryEntry(int seq, char*comm):seqNum(seq){
+            command = new char[strlen(comm)+1];
+            strcpy(command, comm);
+        }
+
+        ~CommandHistoryEntry(){
+            delete[](command);
+        }
+
+        void repeatCommand(){
+            seqNum++;
+        }
+
+        int compareCommand(char*comm){
+            return strcmp((comm, command));
+        }
+
+        ostream& operator<<(ostream& os, const CommandHistoryEntry& dt){
+            cout << right << setw(5) << seqNum << " " << command << endl;
+            return os;
+        }
+    };
+
+private:
+    CommandHistoryEntry history[50];
+    int top=0;
+    int capcitcy=0;
+    int seq=1;
+
+    // TODO: Add your data members
+public:
+    CommandsHistory(){}
+    ~CommandsHistory() {}
+    void addRecord(const char* cmd_line){
+        if(history[top].compareCommand(cmd_line)==0)
+            history[top].repeatCommand();
+        else
+            history[top]= CommandHistoryEntry(seq, cmd_line);
+        if (top++==50)
+            top=0;
+
+        seq++;
+        if (capcitcy!=49)
+            capcitcy++;
+
+    }
+
+    void printHistory(){
+        for (int i= top; i<=capcitcy){
+            cout<< history[i];
+        }
+
+        for (int j = 0; j < top; ++j) {
+            out<< history[j];
+        }
+    }
+};
+
