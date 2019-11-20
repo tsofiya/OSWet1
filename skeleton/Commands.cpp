@@ -54,6 +54,27 @@ int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_EXIT()
 }
 
+class Command {
+protected:
+    char ** args;
+    int argsNum;
+public:
+    Command(const char* cmd_line){
+        argsNum= _parseCommandLine(cmd_line, args);
+    };
+    virtual ~Command(){
+        for (int i = 0; i < argNum; ++i) {
+            free(args[i]);
+        }
+        free(args);
+    }
+
+    virtual void execute() = 0;
+    //virtual void prepare();
+    //virtual void cleanup();
+    // TODO: Add your extra methods if needed
+};
+
 
 /*int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_ENTRY()
@@ -130,19 +151,25 @@ void SmallShell::executeCommand(const char *cmd_line) {
   // TODO: Add your implementation here
 
     char** args;
-    bool bkg=false;
+    bool bkg=_isBackgroundComamnd(cmd_line);
 
-    if (_isBackgroundComamnd(cmd_line)){
-        bkg=true;
+    if (bkg){
         _removeBackgroundSign(cmd_line);
     }
-    int i = _parseCommandLine(cmd_line, args);
-    if(//must we check args number here to be logical?);
-    Command* clean_command = CreateCommand(cmd_line);
+
+    Command clean_command = CreateCommand(cmd_line);
+
+    int pid= 0;
+    if (bkg) {
+        //TODO: Update job into joblist
+        pid = fork();
+    }
+    if (pid == 0) //I'm the son (or foreground)
+        clean_command.execute();
 
 
 
-  // for example:
+    // for example:
   // Command* cmd = CreateCommand(cmd_line);
   // cmd->execute();
   // Please note that you must fork smash process for some commands (e.g., external commands....)
