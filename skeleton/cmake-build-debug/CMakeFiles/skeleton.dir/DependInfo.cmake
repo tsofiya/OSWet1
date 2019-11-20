@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/student/Documents/OSProjects/smash_skeleton/skeleton/smash.cpp" "/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/CMakeFiles/skeleton.dir/smash.cpp.o"
+  "/home/student/repos/OSWet1/skeleton/smash.cpp" "/home/student/repos/OSWet1/skeleton/cmake-build-debug/CMakeFiles/skeleton.dir/smash.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

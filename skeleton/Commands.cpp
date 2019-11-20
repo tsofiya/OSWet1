@@ -152,6 +152,7 @@ private:
 public:
     CommandsHistory(){}
     ~CommandsHistory() {}
+
     void addRecord(const char* cmd_line){
         if(history[top].compareCommand(cmd_line)==0)
             history[top].repeatCommand();
@@ -167,13 +168,22 @@ public:
     }
 
     void printHistory(){
-        for (int i= top; i<=capcitcy){
+        for (int i= topd; i<=capcitcy; ++i){
             cout<< history[i];
         }
 
         for (int j = 0; j < top; ++j) {
             out<< history[j];
         }
+    }
+};
+
+class GetCurrDirCommand : public BuiltInCommand {
+public:
+    GetCurrDirCommand(const char* cmd_line){}
+    virtual ~GetCurrDirCommand() {}
+    void execute() override{
+        cout<< getcwd();
     }
 };
 

@@ -8,28 +8,28 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug"/>
+				<Option working_dir="/home/student/repos/OSWet1/skeleton/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug"/>
+				<Option working_dir="/home/student/repos/OSWet1/skeleton/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="skeleton">
-				<Option output="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/skeleton" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug"/>
+				<Option output="/home/student/repos/OSWet1/skeleton/cmake-build-debug/skeleton" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/student/repos/OSWet1/skeleton/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -44,15 +44,15 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 skeleton"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 skeleton"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="skeleton/fast">
-				<Option output="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/skeleton" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug"/>
+				<Option output="/home/student/repos/OSWet1/skeleton/cmake-build-debug/skeleton" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/student/repos/OSWet1/skeleton/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -67,33 +67,33 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 skeleton/fast"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 skeleton/fast"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug"/>
+				<Option working_dir="/home/student/repos/OSWet1/skeleton/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/Documents/OSProjects/smash_skeleton/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/student/repos/OSWet1/skeleton/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/student/Documents/OSProjects/smash_skeleton/skeleton/Commands.h">
+		<Unit filename="/home/student/repos/OSWet1/skeleton/Commands.h">
 			<Option target="skeleton"/>
 		</Unit>
-		<Unit filename="/home/student/Documents/OSProjects/smash_skeleton/skeleton/signals.h">
+		<Unit filename="/home/student/repos/OSWet1/skeleton/signals.h">
 			<Option target="skeleton"/>
 		</Unit>
-		<Unit filename="/home/student/Documents/OSProjects/smash_skeleton/skeleton/smash.cpp">
+		<Unit filename="/home/student/repos/OSWet1/skeleton/smash.cpp">
 			<Option target="skeleton"/>
 		</Unit>
-		<Unit filename="/home/student/Documents/OSProjects/smash_skeleton/skeleton/CMakeLists.txt">
+		<Unit filename="/home/student/repos/OSWet1/skeleton/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>
