@@ -71,9 +71,13 @@ class ShowPidCommand : public BuiltInCommand {
   void execute() override;
 };
 
+
+
 class JobsList;
 class QuitCommand : public BuiltInCommand {
-// TODO: Add your data members public:
+// TODO: Add your data members
+protected:
+public:
   QuitCommand(const char* cmd_line, JobsList* jobs);
   virtual ~QuitCommand() {}
   void execute() override;
@@ -82,11 +86,8 @@ class QuitCommand : public BuiltInCommand {
 class CommandsHistory {
  protected:
   class CommandHistoryEntry {
-  public:
-      CommandHistoryEntry(int seq, char*comm);
-      ~CommandHistoryEntry();
+	  // TODO: Add your data members
   };
-
  // TODO: Add your data members
  public:
   CommandsHistory();
@@ -106,6 +107,26 @@ class HistoryCommand : public BuiltInCommand {
 class JobsList {
  public:
   class JobEntry {
+
+      int jobPID;
+      int jobSeqID;
+      char* jobcommand;
+      int seconds;
+
+      JobEntry(int jobPID, int jobSeqID, const char* jobcomm){
+        this->jobPID=jobPID;
+        this->jobSeqID=jobSeqID;
+        /*
+        this->jobcommand= (char*)malloc(strlen(jobcomm)+1);
+        if(!jobcommand){
+          ; //???????????
+        }
+         */
+        this->seconds=0; //not sure this should be initiated here...
+      }
+
+      ~
+
    // TODO: Add your data members
   };
  // TODO: Add your data members
@@ -167,23 +188,19 @@ class SmallShell {
  private:
   // TODO: Add your data members
   SmallShell();
-  CommandsHistory history;
-  JobsList jobs;
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor
   void operator=(SmallShell const&)  = delete; // disable = operator
   static SmallShell& getInstance() // make SmallShell singleton
   {
-      static SmallShell instance; // Guaranteed to be destroyed.
-      // Instantiated on first use.
-      return instance;
+    static SmallShell instance; // Guaranteed to be destroyed.
+    // Instantiated on first use.
+    return instance;
   }
-
   ~SmallShell();
   void executeCommand(const char* cmd_line);
   // TODO: add extra methods as needed
-
 };
 
 #endif //SMASH_COMMAND_H_

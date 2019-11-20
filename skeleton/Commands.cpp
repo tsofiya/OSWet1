@@ -6,8 +6,6 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
-#include <stdio.h>
-#include <iostream>
 
 using namespace std;
 
@@ -22,7 +20,42 @@ using namespace std;
 #define FUNC_EXIT()
 #endif
 
+
+const std::string WHITESPACE = " \n\r\t\f\v";
+string _ltrim(const std::string& s)
+{
+  size_t start = s.find_first_not_of(WHITESPACE);
+  return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+string _rtrim(const std::string& s)
+{
+  size_t end = s.find_last_not_of(WHITESPACE);
+  return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+string _trim(const std::string& s)
+{
+  return _rtrim(_ltrim(s));
+}
+
 int _parseCommandLine(const char* cmd_line, char** args) {
+  FUNC_ENTRY()
+  int i = 0;
+  std::istringstream iss(_trim(string(cmd_line)).c_str());
+  for(std::string s; iss >> s; ) {
+    args[i] = (char*)malloc(s.length()+1);
+    memset(args[i], 0, s.length()+1);
+    strcpy(args[i], s.c_str());
+    args[++i] = NULL;
+  }
+  return i;
+
+  FUNC_EXIT()
+}
+
+
+/*int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_ENTRY()
   stringstream check1(cmd_line);
   string intermediate;
@@ -38,7 +71,7 @@ int _parseCommandLine(const char* cmd_line, char** args) {
 
   FUNC_EXIT()
 }
-
+*/
 bool _isBackgroundComamnd(const char* cmd_line) {
   const string whitespace = " \t\n";
   const string str(cmd_line);
@@ -67,6 +100,7 @@ void _removeBackgroundSign(char* cmd_line) {
 // TODO: Add your implementation for classes in Commands.h 
 
 SmallShell::SmallShell() {
+// TODO: add your implementation
 }
 
 SmallShell::~SmallShell() {
@@ -78,102 +112,38 @@ SmallShell::~SmallShell() {
 */
 Command * SmallShell::CreateCommand(const char* cmd_line) {
 	// For example:
-
+/*
   string cmd_s = string(cmd_line);
   if (cmd_s.find("pwd") == 0) {
     return new GetCurrDirCommand(cmd_line);
   }
-  else if (cmd_s.find("cd"))
-      return new ChangeDirCommand(cmd_line);
-  else if(cmd_s.find("history"))
-      return new HistoryCommand(cmd_line, *history);
-  else if(cmd_s.find("jobs"))
-      return new JobsCommand(cmd_line, *jobs);
-  else if(cmd_s.find("kill"))
-      return new KillCommand(cmd_line, *jobs);
-  else if(cmd_s.find("showpid"))
-      return new ShowPidCommand(cmd_line);
-  else if(cmd_s.find("fg"))
-      return new ForegroundCommand(cmd_line, *jobs);
-  else if(cmd_s.find("bg"))
-      return new BackgroundCommand(cmd_line, *jobs);
-  else if(cmd_s.find("quit"))
-      return new QuitCommand(cmd_line, *jobs);
-  else if(cmd_s.find("cp"))
-      return new CopyCommand(cmd_line);
+  else if ...
+  .....
+  else {
+    return new ExternalCommand(cmd_line);
+  }
+  */
   return nullptr;
 }
 
 void SmallShell::executeCommand(const char *cmd_line) {
   // TODO: Add your implementation here
+
+    char** args;
+    bool bkg=false;
+
+    if (_isBackgroundComamnd(cmd_line)){
+        bkg=true;
+        _removeBackgroundSign(cmd_line);
+    }
+    int i = _parseCommandLine(cmd_line, args);
+    if(//must we check args number here to be logical?);
+    Command* clean_command = CreateCommand(cmd_line);
+
+
+
   // for example:
   // Command* cmd = CreateCommand(cmd_line);
   // cmd->execute();
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
-
-class CommandsHistory {
-protected:
-    class CommandHistoryEntry {
-    private:
-        int seqNum;
-        char* command;
-    public:
-        CommandHistoryEntry(int seq, char*comm):seqNum(seq){
-            command = new char[strlen(comm)+1];
-            strcpy(command, comm);
-        }
-
-        ~CommandHistoryEntry(){
-            delete[](command);
-        }
-
-        void repeatCommand(){
-            seqNum++;
-        }
-
-        int compareCommand(char*comm){
-            return strcmp((comm, command));
-        }
-
-        ostream& operator<<(ostream& os, const CommandHistoryEntry& dt){
-            cout << right << setw(5) << seqNum << " " << command << endl;
-            return os;
-        }
-    };
-
-private:
-    CommandHistoryEntry history[50];
-    int top=0;
-    int capcitcy=0;
-    int seq=1;
-
-    // TODO: Add your data members
-public:
-    CommandsHistory(){}
-    ~CommandsHistory() {}
-    void addRecord(const char* cmd_line){
-        if(history[top].compareCommand(cmd_line)==0)
-            history[top].repeatCommand();
-        else
-            history[top]= CommandHistoryEntry(seq, cmd_line);
-        if (top++==50)
-            top=0;
-
-        seq++;
-        if (capcitcy!=49)
-            capcitcy++;
-
-    }
-
-    void printHistory(){
-        for (int i= top; i<=capcitcy){
-            cout<< history[i];
-        }
-
-        for (int j = 0; j < top; ++j) {
-            out<< history[j];
-        }
-    }
-};
-
