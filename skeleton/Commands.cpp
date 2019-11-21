@@ -187,3 +187,23 @@ public:
     }
 };
 
+class HistoryCommand : public BuiltInCommand {
+    CommandsHistory * history;
+public:
+    HistoryCommand(const char* cmd_line, CommandsHistory* hist):history(hist){}
+    virtual ~HistoryCommand() {}
+    void execute() override{
+        *history->printHistory();
+    }
+};
+
+
+class KillCommand : public BuiltInCommand {
+     JobsList* jobs
+public:
+    KillCommand(const char* cmd_line, JobsList* j):jobs(j){}
+    virtual ~KillCommand() {}
+    void execute() override{
+         if()
+     }
+};
