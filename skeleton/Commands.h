@@ -9,9 +9,12 @@
 #define HISTORY_MAX_RECORDS (50)
 
 class Command {
+protected:
+    char ** args;
+    int argsNum;
  public:
-  Command(const char* cmd_line){};
-  virtual ~Command(){  }
+  Command(const char* cmd_line);
+  virtual ~Command();
   virtual void execute() = 0;
   //virtual void prepare();
   //virtual void cleanup();
@@ -51,15 +54,16 @@ class RedirectionCommand : public Command {
 
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members public:
-  ChangeDirCommand(const char* cmd_line, char** plastPwd);
-  virtual ~ChangeDirCommand() {}
+public:
+  ChangeDirCommand(const char* cmd_line);
+  virtual ~ChangeDirCommand();
   void execute() override;
 };
 
 class GetCurrDirCommand : public BuiltInCommand {
  public:
-  GetCurrDirCommand(const char* cmd_line);
-  virtual ~GetCurrDirCommand() {}
+  GetCurrDirCommand(const char *cmd_line);
+  virtual ~GetCurrDirCommand();
   void execute() override;
 };
 
@@ -74,32 +78,54 @@ class ShowPidCommand : public BuiltInCommand {
 
 class JobsList;
 class QuitCommand : public BuiltInCommand {
+private:
+    JobsList *jobs;
 // TODO: Add your data members
 protected:
 public:
   QuitCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~QuitCommand() {}
+  virtual ~QuitCommand();
   void execute() override;
 };
+class CommandHistoryEntry{
+private:
+    int seqNum;
+    char* command;
+public:
+    CommandHistoryEntry(int seq, const char *comm);
+    ~CommandHistoryEntry();
+    void repeatCommand();
 
+    int compareCommand(const char* comm);
+
+    friend std::ostream& operator<<(std::ostream& os, const CommandHistoryEntry& dt);
+
+};
 class CommandsHistory {
+    private:
+        int seqNum;
+        char* command;
+        CommandHistoryEntry* history[50];
+    int top=0;
+    int capcitcy=0;
+    int seq=1;
  protected:
-  class CommandHistoryEntry {
-	  // TODO: Add your data members
-  };
+
  // TODO: Add your data members
  public:
   CommandsHistory();
-  ~CommandsHistory() {}
+  ~CommandsHistory();
   void addRecord(const char* cmd_line);
   void printHistory();
 };
 
 class HistoryCommand : public BuiltInCommand {
+private:
+    CommandsHistory *history;
  // TODO: Add your data members
  public:
+    ~HistoryCommand();
   HistoryCommand(const char* cmd_line, CommandsHistory* history);
-  virtual ~HistoryCommand() {}
   void execute() override;
 };
 
@@ -111,7 +137,7 @@ class JobsList {
       int jobSeqID;
       char* jobcommand;
       int seconds;
-
+  public:
       JobEntry(int jobPID, int jobSeqID, const char* jobcomm){
         this->jobPID=jobPID;
         this->jobSeqID=jobSeqID;
@@ -124,7 +150,9 @@ class JobsList {
         this->seconds=0; //not sure this should be initiated here...
       }
 
-      ~
+      int getPID(){
+          return jobPID;
+      }
 
    // TODO: Add your data members
   };
@@ -132,12 +160,12 @@ class JobsList {
  public:
   JobsList();
   ~JobsList();
-  void addJob(Command* cmd, bool isStopped = false);
+  void addJob(Command* cmd,int pid, bool isStopped = false);
   void printJobsList();
   void killAllJobs();
   void removeFinishedJobs();
   JobEntry * getJobById(int jobId);
-  void removeJobById(int jobId);
+  bool removeJobById(int jobId);
   JobEntry * getLastJob(int* lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
   // TODO: Add extra methods or modify exisitng ones as needed
@@ -152,18 +180,22 @@ class JobsCommand : public BuiltInCommand {
 };
 
 class KillCommand : public BuiltInCommand {
+private:
+    JobsList *jobs;
  // TODO: Add your data members
  public:
   KillCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~KillCommand() {}
+  virtual ~KillCommand();
   void execute() override;
 };
 
 class ForegroundCommand : public BuiltInCommand {
+private:
+    JobsList *jobs;
  // TODO: Add your data members
  public:
   ForegroundCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~ForegroundCommand() {}
+  virtual ~ForegroundCommand();
   void execute() override;
 };
 
@@ -185,6 +217,8 @@ class CopyCommand : public BuiltInCommand {
 
 class SmallShell {
  private:
+    CommandsHistory history;
+    JobsList jobs;
   // TODO: Add your data members
   SmallShell();
  public:

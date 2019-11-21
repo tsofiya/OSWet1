@@ -123,6 +123,33 @@ OS/fast:
 	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/build
 .PHONY : OS/fast
 
+Commands.o: Commands.cpp.o
+
+.PHONY : Commands.o
+
+# target to build an object file
+Commands.cpp.o:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/Commands.cpp.o
+.PHONY : Commands.cpp.o
+
+Commands.i: Commands.cpp.i
+
+.PHONY : Commands.i
+
+# target to preprocess a source file
+Commands.cpp.i:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/Commands.cpp.i
+.PHONY : Commands.cpp.i
+
+Commands.s: Commands.cpp.s
+
+.PHONY : Commands.s
+
+# target to generate assembly for a file
+Commands.cpp.s:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/Commands.cpp.s
+.PHONY : Commands.cpp.s
+
 smash.o: smash.cpp.o
 
 .PHONY : smash.o
@@ -159,6 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... OS"
 	@echo "... edit_cache"
+	@echo "... Commands.o"
+	@echo "... Commands.i"
+	@echo "... Commands.s"
 	@echo "... smash.o"
 	@echo "... smash.i"
 	@echo "... smash.s"
