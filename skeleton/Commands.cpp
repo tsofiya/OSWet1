@@ -22,7 +22,63 @@ using namespace std;
 #define FUNC_EXIT()
 #endif
 
+
+const std::string WHITESPACE = " \n\r\t\f\v";
+string _ltrim(const std::string& s)
+{
+  size_t start = s.find_first_not_of(WHITESPACE);
+  return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+string _rtrim(const std::string& s)
+{
+  size_t end = s.find_last_not_of(WHITESPACE);
+  return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+
+string _trim(const std::string& s)
+{
+  return _rtrim(_ltrim(s));
+}
+
 int _parseCommandLine(const char* cmd_line, char** args) {
+  FUNC_ENTRY()
+  int i = 0;
+  std::istringstream iss(_trim(string(cmd_line)).c_str());
+  for(std::string s; iss >> s; ) {
+    args[i] = (char*)malloc(s.length()+1);
+    memset(args[i], 0, s.length()+1);
+    strcpy(args[i], s.c_str());
+    args[++i] = NULL;
+  }
+  return i;
+
+  FUNC_EXIT()
+}
+
+class Command {
+protected:
+    char ** args;
+    int argsNum;
+public:
+    Command(const char* cmd_line){
+        argsNum= _parseCommandLine(cmd_line, args);
+    };
+    virtual ~Command(){
+        for (int i = 0; i < argNum; ++i) {
+            free(args[i]);
+        }
+        free(args);
+    }
+
+    virtual void execute() = 0;
+    //virtual void prepare();
+    //virtual void cleanup();
+    // TODO: Add your extra methods if needed
+};
+
+
+/*int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_ENTRY()
   stringstream check1(cmd_line);
   string intermediate;
@@ -38,6 +94,7 @@ int _parseCommandLine(const char* cmd_line, char** args) {
 
   FUNC_EXIT()
 }
+*/
 
 bool _isBackgroundComamnd(const char* cmd_line) {
   const string whitespace = " \t\n";
@@ -152,7 +209,6 @@ private:
 public:
     CommandsHistory(){}
     ~CommandsHistory() {}
-
     void addRecord(const char* cmd_line){
         if(history[top].compareCommand(cmd_line)==0)
             history[top].repeatCommand();
@@ -168,7 +224,7 @@ public:
     }
 
     void printHistory(){
-        for (int i= topd; i<=capcitcy; ++i){
+        for (int i= top; i<=capcitcy){
             cout<< history[i];
         }
 
@@ -199,11 +255,11 @@ public:
 
 
 class KillCommand : public BuiltInCommand {
-     JobsList* jobs
+    JobsList* jobs
 public:
     KillCommand(const char* cmd_line, JobsList* j):jobs(j){}
     virtual ~KillCommand() {}
     void execute() override{
-         if()
-     }
+        if()
+    }
 };

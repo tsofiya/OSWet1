@@ -53,12 +53,12 @@ CMAKE_BINARY_DIR = /home/student/repos/OSWet1/skeleton/cmake-build-debug
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/skeleton.dir/all
+all: CMakeFiles/OS.dir/all
 
 .PHONY : all
 
 # The main recursive "clean" target.
-clean: CMakeFiles/skeleton.dir/clean
+clean: CMakeFiles/OS.dir/clean
 
 .PHONY : clean
 
@@ -68,31 +68,31 @@ preinstall:
 .PHONY : preinstall
 
 #=============================================================================
-# Target rules for target CMakeFiles/skeleton.dir
+# Target rules for target CMakeFiles/OS.dir
 
 # All Build rule for target.
-CMakeFiles/skeleton.dir/all:
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/depend
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/student/repos/OSWet1/skeleton/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target skeleton"
-.PHONY : CMakeFiles/skeleton.dir/all
+CMakeFiles/OS.dir/all:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/depend
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/student/repos/OSWet1/skeleton/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target OS"
+.PHONY : CMakeFiles/OS.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/skeleton.dir/rule: cmake_check_build_system
+CMakeFiles/OS.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/repos/OSWet1/skeleton/cmake-build-debug/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/skeleton.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/OS.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/repos/OSWet1/skeleton/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/skeleton.dir/rule
+.PHONY : CMakeFiles/OS.dir/rule
 
 # Convenience name for target.
-skeleton: CMakeFiles/skeleton.dir/rule
+OS: CMakeFiles/OS.dir/rule
 
-.PHONY : skeleton
+.PHONY : OS
 
 # clean rule for target.
-CMakeFiles/skeleton.dir/clean:
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/clean
-.PHONY : CMakeFiles/skeleton.dir/clean
+CMakeFiles/OS.dir/clean:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/clean
+.PHONY : CMakeFiles/OS.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

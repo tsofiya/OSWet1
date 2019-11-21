@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named skeleton
+# Target rules for targets named OS
 
 # Build rule for target.
-skeleton: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 skeleton
-.PHONY : skeleton
+OS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 OS
+.PHONY : OS
 
 # fast build rule for target.
-skeleton/fast:
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/build
-.PHONY : skeleton/fast
+OS/fast:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/build
+.PHONY : OS/fast
 
 smash.o: smash.cpp.o
 
@@ -129,7 +129,7 @@ smash.o: smash.cpp.o
 
 # target to build an object file
 smash.cpp.o:
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/smash.cpp.o
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/smash.cpp.o
 .PHONY : smash.cpp.o
 
 smash.i: smash.cpp.i
@@ -138,7 +138,7 @@ smash.i: smash.cpp.i
 
 # target to preprocess a source file
 smash.cpp.i:
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/smash.cpp.i
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/smash.cpp.i
 .PHONY : smash.cpp.i
 
 smash.s: smash.cpp.s
@@ -147,7 +147,7 @@ smash.s: smash.cpp.s
 
 # target to generate assembly for a file
 smash.cpp.s:
-	$(MAKE) -f CMakeFiles/skeleton.dir/build.make CMakeFiles/skeleton.dir/smash.cpp.s
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/smash.cpp.s
 .PHONY : smash.cpp.s
 
 # Help Target
@@ -157,7 +157,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... skeleton"
+	@echo "... OS"
 	@echo "... edit_cache"
 	@echo "... smash.o"
 	@echo "... smash.i"
