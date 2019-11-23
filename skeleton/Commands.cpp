@@ -8,6 +8,8 @@
 #include <iomanip>
 #include "Commands.h"
 #include <time.h>
+#include "BidirectionalList.h"
+#include <sys/types.h>
 
 using namespace std;
 
@@ -73,7 +75,7 @@ public:
         argsNum= _parseCommandLine(cmd_line, args);
     };
     virtual ~Command(){
-        for (int i = 0; i < argNum; ++i) {
+        for (int i = 0; i < argsNum; ++i) { //was argnum, changed to argsnum
             free(args[i]);
         }
         free(args);
@@ -205,35 +207,150 @@ public:
             delete[](jobcommand);
         }
 
+        int getJobPID(){
+            return jobPID;
+        }
+
+        JobStatus getJobStatus(){
+            return status;
+        }
+
         ostream& operator<<(ostream& os, const JobEntry& jobentry){
+            double secondsElapsed = difftime(time(), jobAddingTime);
+
             if (jobentry.status == STOPPED_JOB){
 
-                double secondsElapsed = difftime(time(), jobAddingTime);
                 cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << "(stopped)" << endl;
             }
             else{
-                cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << jobentry.seconds << endl;
+                cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << endl;
             }
             return os;
         }
 
     };
 
-        private:
+private:
+    BiDirectionalList<JobEntry> list;
+    int JobsNum;
 
 
     // TODO: Add your data members
 public:
-    JobsList();
-    ~JobsList();
-    void addJob(Command* cmd, bool isStopped = false);
-    void printJobsList();
-    void killAllJobs();
-    void removeFinishedJobs();
-    JobEntry * getJobById(int jobId);
-    void removeJobById(int jobId);
-    JobEntry * getLastJob(int* lastJobId);
-    JobEntry *getLastStoppedJob(int *jobId);
+    JobsList(): JobsNum(0){
+        list= BiDirectionalList<JobEntry>();
+    };
+    ~JobsList(){ //anythind needed here?
+    }
+    void addJob(int pid, Command* cmd, bool isStopped = false){
+        if (JobsNum>=100){
+            return;
+        }
+
+        if (list.push(JobEntry(pid, JobsNum+1, Command.command))){  //not command, but the command itself as str, TODO: fix
+                JobsNum++;
+        }
+        }
+
+    void printJobsList() {
+
+//TODO: figure this shit out
+        removeFinishedJobs(); //MAYBE DELETE THIS, NOT NECESSARY
+        auto iterator = list.getHead();
+        while (iterator != nullptr) {
+            JobEntry current = iterator->data;
+                cout << current << " \n"; //TODO: FIX THIS...
+                iterator = (iterator->next);
+            }
+    }
+
+
+
+    void killAllJobs(){
+        auto iterator = list.getHead();
+        while (iterator != nullptr) {
+            JobEntry current = iterator->data;
+            int currpid=current.getJobPID();
+
+            if (kill(currpid, 0)) {
+                kill(currpid, 9);
+            }//TODO: figure out when this would even be necessary
+               iterator = (iterator->next);
+                list.removeNode(iterator->previous);
+            JobsNum--;
+                continue;
+            }
+        }
+
+
+
+    void removeFinishedJobs() {
+        auto iterator = list.getHead();
+        while (iterator != nullptr) {
+            JobEntry current = iterator->data;
+            int currpid = current.getJobPID(); //pid should be of type pid_t
+            if (waitpid(currpid, WNOHANG)) {//should be executed by father
+                kill(currpid, SIGKILL);
+                iterator = (iterator->next);
+                list.removeNode(iterator->previous);
+                JobsNum--;
+            }
+        }
+    }
+
+
+
+    JobEntry* getJobById(int jobId){ //used to return JobEntry* ... this ain't C, but would it be considered a mistake?
+
+        auto iterator = list.getHead();
+        while (iterator != nullptr) {
+            JobEntry current = iterator->data;
+            if (current.getJobPID() == jobId) {
+                return &current;
+            }
+            iterator = (iterator->next);
+        }
+        return nullptr;
+    }
+
+    void removeJobById(int jobId){
+        auto iterator = list.getHead();
+        while (iterator != nullptr) {
+            JobEntry current = iterator->data;
+            if (current.getJobPID() == jobId) {
+                if(kill(jobId,0)){  //TODO: and else? could this even happen?
+                    kill(jobId,SIGKILL);
+                }
+                list.removeNode(iterator);
+                    JobsNum--;
+                return;
+            }
+            iterator = (iterator->next);
+        }
+    }
+    JobEntry * getLastJob(int* lastJobId) {
+        auto iterator = list.getHead();
+        while (iterator->next != nullptr) {
+            iterator = iterator->next;
+        }
+        JobEntry current = iterator->data;
+        return &current;
+    }
+
+    JobEntry *getLastStoppedJob(int *jobId) {
+        auto iterator = list.getTail();
+        while ((iterator->data).getJobStatus() != STOPPED_JOB
+               && iterator->previous != nullptr) {
+            iterator = iterator->previous;
+        }
+        if (iterator->previous == nullptr
+            && iterator->data.getJobStatus() != STOPPED_JOB) {
+            return nullptr;
+        } else {
+            JobEntry current = iterator->data;
+            return &current; //TODO: CAN I CHANGE THE RETURN TYPE OF A FUNCTION THEY DESIGNED?
+        }
+    }
     // TODO: Add extra methods or modify exisitng ones as needed
 };
 
@@ -241,68 +358,24 @@ public:
 class CommandsHistory {
 protected:
     class CommandHistoryEntry {
-    private:
-        int seqNum;
-        char* command;
-    public:
-        CommandHistoryEntry(int seq, char*comm):seqNum(seq){
-            command = new char[strlen(comm)+1];
-            strcpy(command, comm);
-        }
-
-        ~CommandHistoryEntry(){
-            delete[](command);
-        }
-
-        void repeatCommand(){
-            seqNum++;
-        }
-
-        int compareCommand(char*comm){
-            return strcmp((comm, command));
-        }
-
-        ostream& operator<<(ostream& os, const CommandHistoryEntry& dt){
-            cout << right << setw(5) << seqNum << " " << command << endl;
-            return os;
-        }
+        // TODO: Add your data members
     };
-
-private:
-    CommandHistoryEntry history[50];
-    int top=0;
-    int capcitcy=0;
-    int seq=1;
-
     // TODO: Add your data members
 public:
-    CommandsHistory(){}
+    CommandsHistory();
     ~CommandsHistory() {}
-
-    void addRecord(const char* cmd_line){
-        if(history[top].compareCommand(cmd_line)==0)
-            history[top].repeatCommand();
-        else
-            history[top]= CommandHistoryEntry(seq, cmd_line);
-        if (top++==50)
-            top=0;
-
-        seq++;
-        if (capcitcy!=49)
-            capcitcy++;
-
-    }
-
-    void printHistory(){
-        for (int i= topd; i<=capcitcy; ++i){
-            cout<< history[i];
-        }
-
-        for (int j = 0; j < top; ++j) {
-            out<< history[j];
-        }
-    }
+    void addRecord(const char* cmd_line);
+    void printHistory();
 };
+
+class HistoryCommand : public BuiltInCommand {
+    // TODO: Add your data members
+public:
+    HistoryCommand(const char* cmd_line, CommandsHistory* history);
+    virtual ~HistoryCommand() {}
+    void execute() override;
+};
+
 
 
 class GetCurrDirCommand : public BuiltInCommand {
@@ -313,3 +386,131 @@ public:
         cout<< getcwd();
     }
 };
+//DID they mean... past working directory? wtf is this
+ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char **plastPwd) : BuiltInCommand(cmd_line), prevDir(*plastPwd){} //TODO: is this what they meant??
+virtual ~ChangeDirCommand() {}
+void ChangeDirCommand::setPrevDir(char* d){
+    //delete[](prevDir);
+    prevDir = new char[(strlen(d))+1];
+    strcpy(prevDir, d);
+}
+void ChangeDirCommand::execute(){
+
+    char pwd[256];
+    int length;
+    if(argsNum > 2){
+        cout << "smash error: cd: too many arguments" << endl;
+    }
+
+    else{
+        if(args[0]=="-") {
+            if (prevDir == nullptr) {
+                cout << "smash error: cd: OLDPWD not set" << endl;
+            } else {
+                char* temp=prevDir;
+                setPrevDir(getcwd(pwd,length));
+                if(chdir(temp)<0){
+                    perror("smash error: chdir failed");
+                } //TODO: the structure must always hold the previous working directory
+            }
+        }
+        else{
+            setPrevDir(getcwd(pwd,length));
+            if(args[0]==".."){
+                if(chdir("/home")<0){
+                    perror("smash error: chdir failed");
+                }
+            }
+            else{
+                if(chdir(args[0])<0){
+                    perror("smash error: chdir failed");
+                }
+            }
+        }
+    }
+}
+
+JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand (cmd_line), jobs(jobs){}
+virtual ~JobsCommand() {}
+void JobsCommand::execute(){
+    jobs.JobsList::removeFinishedJobs();
+    jobs.JobsList::printAllJobs();
+}
+
+ShowPidCommand::ShowPidCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
+virtual ~ShowPidCommand() {}
+void ShowPidCommand::execute(){
+       pid_t id=getpid();
+    cout << "smash pid is " << long(id) << endl;
+}
+
+BackgroundCommand::BackgroundCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), jobs(jobs){}
+virtual ~BackgroundCommand() {}
+void BackgroundCommand::execute() {
+
+    JobsList::JobEntry * je;
+    int ID=0;
+    if (argsNum > 2){
+        cout << "smash error: bg: invalid arguments" << endl;
+        return;
+    }
+    if (argsNum<2){
+        je=JobsList::jobs.JobsList::getLastStoppedJob(&ID);
+        if(!je){
+            cout << "smash error: there is no stopped jobs to resume" << endl;
+            return;
+    }
+    else {
+        je = jobs.JobsList::getJobByID(ID);
+            if(!je){
+                cout << "smash error: bg: job-id " << ID << " does not exist" << endl;
+                return;
+            }
+        if(je->getJobStatus()==BACKGROUND_JOB){
+            cout << "smash error: bg: job-id " << ID << " is already running in the background" << endl;
+            return;
+        }
+    }
+        *je.JobsList::JobSetStatus(BACKGROUND_JOB);
+        kill(ID, SIGCONT);
+    }
+
+}
+
+
+CopyCommand::CopyCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
+virtual ~CopyCommand() {}
+void CopyCommand::execute(){
+    int fd=0;
+    if (argsNum<3){
+        cout<< "smash error: cp: invalid arguments" << endl; //TODO: WHAT IF THIS HAPPENS? PERROR?
+    }
+    char* buffer=new char[100];
+    char* readfile=args[1];
+    char* writefile=args[2];
+    int fdread=open(O_RDONLY, readfile);
+    int fdwrite=open(O_WRONLY, writefile);
+    if(fdread==-1 || fdwrite==-1){
+        perror("smash error: open failed");
+        delete[](buffer);
+        return;
+    }
+    ssize_t s=read(fdread, buffer,90);
+         while (s!=0){
+             if(s==-1){
+                 perror("smash error: read failed");
+                 delete[](buffer);
+                 return;
+             }
+             if(write(fdwrite,buffer,90)==-1){
+                 perror("smash error: write failed");
+                 delete[](buffer);
+                 return;
+        }
+             s=read(fdread, buffer,90);
+    }
+    if(close(fdread)==-1 ||close(fdwrite)==-1){
+        perror("smash error: close failed");
+    }
+     delete[]buffer;
+}

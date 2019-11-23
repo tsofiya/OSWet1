@@ -10,6 +10,7 @@
 #define HISTORY_MAX_RECORDS (50)
 
 class Command {
+
 public:
     Command(const char* cmd_line){};
     virtual ~Command(){  }
@@ -51,11 +52,16 @@ public:
 };
 
 class ChangeDirCommand : public BuiltInCommand {
+
+private:
+    char* prevDir;
+public:
 // TODO: Add your data members public:
     ChangeDirCommand(const char* cmd_line, char** plastPwd);
     virtual ~ChangeDirCommand() {}
     void execute() override;
-};
+    void setPrevDir(char* d);
+    };
 
 class GetCurrDirCommand : public BuiltInCommand {
 public:
@@ -105,14 +111,14 @@ public:
 };
 
 
-        // TODO: Add your data members
+// TODO: Add your data members
 
 class JobsList {
-        public:
-        class JobEntry {
+public:
+    class JobEntry {
 
-            // TODO: Add your data members
-        };
+        // TODO: Add your data members
+    };
 
     // TODO: Add your data members
 public:
