@@ -8,6 +8,11 @@
 #define COMMAND_MAX_ARGS (20)
 #define HISTORY_MAX_RECORDS (50)
 
+typedef enum {
+    BACKGROUND_JOB,
+    STOPPED_JOB
+}JobStatus;
+
 class Command {
 protected:
     char ** args;
@@ -25,8 +30,26 @@ protected:
 class JobsList {
 public:
     class JobEntry {
-
         // TODO: Add your data members
+    private:
+        int jobPID;
+        int jobSeqID;
+        char* jobcommand;
+        time_t jobAddingTime;
+        JobStatus status;
+
+    public:
+        JobEntry(int PID, int SeqID, char* command);
+        ~JobEntry();
+
+        int getJobPID(){
+            return jobPID;
+        }
+
+        JobStatus getJobStatus();
+
+        friend std::ostream& operator<<(std::ostream& os, const JobEntry& jobentry);
+
     };
 
     // TODO: Add your data members
@@ -38,7 +61,7 @@ public:
     void killAllJobs();
     void removeFinishedJobs();
     JobEntry * getJobById(int jobId);
-    void removeJobById(int jobId);
+    bool removeJobById(int jobId);
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
     // TODO: Add extra methods or modify exisitng ones as needed
@@ -82,15 +105,16 @@ private:
     char* prevDir;
 public:
 // TODO: Add your data members public:
-  ChangeDirCommand(const char* cmd_line, char** plastPwd);
-  virtual ~ChangeDirCommand() {}
-  void execute() override;
+    ChangeDirCommand(const char* cmd_line, char** plastPwd);
+    virtual ~ChangeDirCommand();
+    void execute() override;
+    void setPrevDir(char* d);
 };
 
 class GetCurrDirCommand : public BuiltInCommand {
  public:
   GetCurrDirCommand(const char* cmd_line);
-  virtual ~GetCurrDirCommand() {}
+  virtual ~GetCurrDirCommand();
   void execute() override;
 };
 
@@ -167,20 +191,25 @@ public:
 };
 
 class KillCommand : public BuiltInCommand {
- // TODO: Add your data members
- public:
-  KillCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~KillCommand() {}
-  void execute() override;
+private:
+    JobsList *jobs;
+    // TODO: Add your data members
+public:
+    KillCommand(const char* cmd_line, JobsList* jobs);
+    virtual ~KillCommand();
+    void execute() override;
 };
 
 class ForegroundCommand : public BuiltInCommand {
- // TODO: Add your data members
- public:
-  ForegroundCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~ForegroundCommand() {}
-  void execute() override;
+private:
+    JobsList *jobs;
+    // TODO: Add your data members
+public:
+    ForegroundCommand(const char* cmd_line, JobsList* jobs);
+    virtual ~ForegroundCommand();
+    void execute() override;
 };
+
 
 class BackgroundCommand : public BuiltInCommand {
  // TODO: Add your data members
@@ -199,22 +228,24 @@ class CopyCommand : public BuiltInCommand {
 
 
 class SmallShell {
- private:
-  // TODO: Add your data members
-  SmallShell();
- public:
-  Command *CreateCommand(const char* cmd_line);
-  SmallShell(SmallShell const&)      = delete; // disable copy ctor
-  void operator=(SmallShell const&)  = delete; // disable = operator
-  static SmallShell& getInstance() // make SmallShell singleton
-  {
-    static SmallShell instance; // Guaranteed to be destroyed.
-    // Instantiated on first use.
-    return instance;
-  }
-  ~SmallShell();
-  void executeCommand(const char* cmd_line);
-  // TODO: add extra methods as needed
+private:
+    CommandsHistory history;
+    JobsList jobs;
+    // TODO: Add your data members
+    SmallShell();
+public:
+    Command *CreateCommand(const char* cmd_line);
+    SmallShell(SmallShell const&)      = delete; // disable copy ctor
+    void operator=(SmallShell const&)  = delete; // disable = operator
+    static SmallShell& getInstance() // make SmallShell singleton
+    {
+        static SmallShell instance; // Guaranteed to be destroyed.
+        // Instantiated on first use.
+        return instance;
+    }
+    ~SmallShell();
+    void executeCommand(const char* cmd_line);
+    // TODO: add extra methods as needed
 };
 
 #endif //SMASH_COMMAND_H_

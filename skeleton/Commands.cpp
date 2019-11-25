@@ -27,12 +27,6 @@ using namespace std;
 #endif
 
 
-typedef enum {
-    BACKGROUND_JOB,
-    STOPPED_JOB
-}JobStatus;
-
-
 
 const std::string WHITESPACE = " \n\r\t\f\v";
 string _ltrim(const std::string& s)
@@ -66,28 +60,6 @@ int _parseCommandLine(const char* cmd_line, char** args) {
 
   FUNC_EXIT()
 }
-
-class Command {
-protected:
-    char ** args;
-    int argsNum;
-public:
-    Command(const char* cmd_line){
-        argsNum= _parseCommandLine(cmd_line, args);
-    };
-    virtual ~Command(){
-        for (int i = 0; i < argNum; ++i) {
-            free(args[i]);
-        }
-        free(args);
-    }
-
-    virtual void execute() = 0;
-    //virtual void prepare();
-    //virtual void cleanup();
-    // TODO: Add your extra methods if needed
-};
-
 
 /*int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_ENTRY()
@@ -238,8 +210,6 @@ void HistoryCommand::execute() {
 
 KillCommand::KillCommand(const char *cmd_line, JobsList *jobs) : BuiltInCommand(cmd_line), jobs(jobs) {}
 
-KillCommand::~KillCommand() {}
-
 void KillCommand::execute() {
     if (argsNum < 3)
         cout << "smash error: kill: invalid arguments" << endl;
@@ -254,10 +224,6 @@ void KillCommand::execute() {
 
 
 ForegroundCommand::ForegroundCommand(const char *cmd_line, JobsList *jobj) : BuiltInCommand(cmd_line), jobs(jobj) {}
-
-ForegroundCommand::~ForegroundCommand() {
-
-}
 
 void ForegroundCommand::execute() {
     JobsList::JobEntry *entry;
@@ -280,7 +246,7 @@ void ForegroundCommand::execute() {
         }
     }
 
-    int pid = entry->getPID();
+    int pid = entry->getJobPID();
 
     waitpid(pid, NULL, NULL);
 
@@ -288,8 +254,6 @@ void ForegroundCommand::execute() {
 
 
 QuitCommand::QuitCommand(const char *cmd_line, JobsList *j) : BuiltInCommand(cmd_line), jobs(j) {}
-
-QuitCommand::~QuitCommand() {}
 
 void QuitCommand::execute() {
     if (argsNum == 2) {
@@ -330,47 +294,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
 class JobsList {
 public:
-    class JobEntry {
-        // TODO: Add your data members
-    private:
-        int jobPID;
-        int jobSeqID;
-        char* jobcommand;
-        time_t jobAddingTime;
-        JobStatus status;
 
-    public:
-        JobEntry(int PID, int SeqID, char* command):jobPID(PID), jobSeqID(SeqID), JobStatus(BACKGROUND_JOB){
-            jobcommand = new char[(strlen(command))+1];
-            strcpy(jobcommand, command);
-            jobAddingTime=time();
-        }
-        ~JobEntry(){
-            delete[](jobcommand);
-        }
-
-        int getJobPID(){
-            return jobPID;
-        }
-
-        JobStatus getJobStatus(){
-            return status;
-        }
-
-        ostream& operator<<(ostream& os, const JobEntry& jobentry){
-            double secondsElapsed = difftime(time(), jobAddingTime);
-
-            if (jobentry.status == STOPPED_JOB){
-
-                cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << "(stopped)" << endl;
-            }
-            else{
-                cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << endl;
-            }
-            return os;
-        }
-
-    };
 
 private:
     BiDirectionalList<JobEntry> list;
@@ -530,7 +454,7 @@ public:
 };
 //DID they mean... past working directory? wtf is this
 ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char **plastPwd) : BuiltInCommand(cmd_line), prevDir(*plastPwd){} //TODO: is this what they meant??
-virtual ~ChangeDirCommand() {}
+ChangeDirCommand::~ChangeDirCommand() {}
 void ChangeDirCommand::setPrevDir(char* d){
     //delete[](prevDir);
     prevDir = new char[(strlen(d))+1];
@@ -663,5 +587,33 @@ int CommandHistoryEntry::compareCommand(const char *comm) {
 
 ostream &operator<<(ostream &os, const CommandHistoryEntry &dt) {
     os << right << setw(5) << dt.seqNum << " " << dt.command << endl;
+    return os;
+}
+
+
+JobsList::JobEntry::JobEntry(int PID, int SeqID, char* command):jobPID(PID), jobSeqID(SeqID), status(BACKGROUND_JOB){
+    jobcommand = new char[(strlen(command))+1];
+    strcpy(jobcommand, command);
+    jobAddingTime=time();
+}
+
+JobsList::JobEntry::~JobEntry(){
+delete[](jobcommand);
+}
+
+JobStatus JobsList::JobEntry::getJobStatus(){
+    return status;
+}
+
+std::ostream& operator<<(std::ostream& os, const JobsList::JobEntry& jobentry){
+    double secondsElapsed = difftime(time(), jobentry.jobAddingTime);
+
+    if (jobentry.status == STOPPED_JOB){
+
+        cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << "(stopped)" << endl;
+    }
+    else{
+        cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << endl;
+    }
     return os;
 }
