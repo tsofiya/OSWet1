@@ -11,6 +11,11 @@
 
 class Command {
 
+protected:
+    char ** args;
+    int argsNum;
+
+
 public:
     Command(const char* cmd_line){};
     virtual ~Command(){  }
@@ -19,6 +24,30 @@ public:
     //virtual void cleanup();
     // TODO: Add your extra methods if needed
 };
+
+
+class JobsList {
+public:
+    class JobEntry {
+
+        // TODO: Add your data members
+    };
+
+    // TODO: Add your data members
+public:
+    JobsList();
+    ~JobsList();
+    void addJob(Command* cmd, bool isStopped = false);
+    void printJobsList();
+    void killAllJobs();
+    void removeFinishedJobs();
+    JobEntry * getJobById(int jobId);
+    void removeJobById(int jobId);
+    JobEntry * getLastJob(int* lastJobId);
+    JobEntry *getLastStoppedJob(int *jobId);
+    // TODO: Add extra methods or modify exisitng ones as needed
+};
+
 
 class BuiltInCommand : public Command {
 public:
@@ -79,7 +108,6 @@ public:
 
 
 
-class JobsList;
 class QuitCommand : public BuiltInCommand {
 // TODO: Add your data members
 protected:
@@ -113,27 +141,6 @@ public:
 
 // TODO: Add your data members
 
-class JobsList {
-public:
-    class JobEntry {
-
-        // TODO: Add your data members
-    };
-
-    // TODO: Add your data members
-public:
-    JobsList();
-    ~JobsList();
-    void addJob(Command* cmd, bool isStopped = false);
-    void printJobsList();
-    void killAllJobs();
-    void removeFinishedJobs();
-    JobEntry * getJobById(int jobId);
-    void removeJobById(int jobId);
-    JobEntry * getLastJob(int* lastJobId);
-    JobEntry *getLastStoppedJob(int *jobId);
-    // TODO: Add extra methods or modify exisitng ones as needed
-};
 
 class JobsCommand : public BuiltInCommand {
     // TODO: Add your data members

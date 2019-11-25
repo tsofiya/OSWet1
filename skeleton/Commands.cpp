@@ -10,6 +10,7 @@
 #include <time.h>
 #include "BidirectionalList.h"
 #include <sys/types.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -26,7 +27,6 @@ using namespace std;
 
 
 typedef enum {
-    FOREGROUND_JOB,
     BACKGROUND_JOB,
     STOPPED_JOB
 }JobStatus;
@@ -70,6 +70,7 @@ class Command {
 protected:
     char ** args;
     int argsNum;
+    JobsList* jobs;
 public:
     Command(const char* cmd_line){
         argsNum= _parseCommandLine(cmd_line, args);
@@ -433,8 +434,8 @@ void ChangeDirCommand::execute(){
 JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand (cmd_line), jobs(jobs){}
 virtual ~JobsCommand() {}
 void JobsCommand::execute(){
-    jobs.JobsList::removeFinishedJobs();
-    jobs.JobsList::printAllJobs();
+    jobs.removeFinishedJobs();
+    jobs.printAllJobs();
 }
 
 ShowPidCommand::ShowPidCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
@@ -455,13 +456,13 @@ void BackgroundCommand::execute() {
         return;
     }
     if (argsNum<2){
-        je=JobsList::jobs.JobsList::getLastStoppedJob(&ID);
+        je=jobs.getLastStoppedJob(&ID);
         if(!je){
             cout << "smash error: there is no stopped jobs to resume" << endl;
             return;
     }
     else {
-        je = jobs.JobsList::getJobByID(ID);
+        je = jobs.getJobByID(ID);
             if(!je){
                 cout << "smash error: bg: job-id " << ID << " does not exist" << endl;
                 return;
@@ -471,7 +472,7 @@ void BackgroundCommand::execute() {
             return;
         }
     }
-        *je.JobsList::JobSetStatus(BACKGROUND_JOB);
+        *je.JobSetStatus(BACKGROUND_JOB);
         kill(ID, SIGCONT);
     }
 
