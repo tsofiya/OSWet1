@@ -346,9 +346,11 @@ void JobsList::killAllJobs(){
         if (kill(currpid, 0)) {
             kill(currpid, 9);
         }//TODO: figure out when this would even be necessary
-        list.erase(iterator);
-        JobsNum--;
+       // JobsNum--;
     }
+    list.clear();
+    JobsNum=0;
+
 }
 
 
