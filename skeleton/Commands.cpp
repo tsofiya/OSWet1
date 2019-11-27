@@ -330,9 +330,10 @@ void JobsList::printJobsList() {
 
 //TODO: figure this shit out
     JobsList::removeFinishedJobs(); //MAYBE DELETE THIS, NOT NECESSARY
-    for(auto iterator = list.vector::begin(); iterator!=list.vector::end(); ++iterator) {
-        //  JobEntry current = *iterator;
-        cout << *iterator << " \n"; //TODO: FIX THIS...
+    for(int i=0; i<list.size();i++){
+        std::cout<<"printing..."<<std::endl;
+        std::cout<<list.at(i)<<std::endl;
+
     }
 }
 
