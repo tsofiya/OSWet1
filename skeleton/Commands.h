@@ -148,6 +148,7 @@ public:
     virtual ~QuitCommand() {}
     void execute() override;
 };
+
 class CommandHistoryEntry{
 private:
     int seqNum;
@@ -162,13 +163,11 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const CommandHistoryEntry& dt);
 
 };
+
 class CommandsHistory {
 private:
-    int seqNum;
-    char* command;
     CommandHistoryEntry* history[50];
-private:
-    int top=0;
+    int top=49;
     int capcitcy=0;
     int seq=1;
 protected:

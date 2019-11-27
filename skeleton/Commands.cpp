@@ -12,6 +12,7 @@
 #include "BidirectionalList.h"
 #include <sys/types.h>
 #include <fcntl.h>
+#include <pwd.h>
 
 using namespace std;
 
@@ -61,6 +62,19 @@ int _parseCommandLine(const char* cmd_line, char** args) {
     FUNC_EXIT()
 }
 
+Command::Command(const char* cmd_line){
+    args= (char**)malloc(sizeof(char**));
+    argsNum = _parseCommandLine(cmd_line, args);
+}
+
+Command::~Command(){
+    for (int i = 0; i < argsNum; ++i) {
+        free(args[i]);
+    }
+}
+
+BuiltInCommand::BuiltInCommand(const char* cmd_line):Command(cmd_line){}
+
 /*int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_ENTRY()
   stringstream check1(cmd_line);
@@ -77,6 +91,11 @@ int _parseCommandLine(const char* cmd_line, char** args) {
   FUNC_EXIT()
 }
 */
+
+int JobEntry::getJobSeqID(){
+    return jobSeqID;
+}
+
 bool _isBackgroundComamnd(const char* cmd_line) {
     const string whitespace = " \t\n";
     const string str(cmd_line);
@@ -117,11 +136,12 @@ SmallShell::~SmallShell() {
 */
 Command *SmallShell::CreateCommand(const char *cmd_line) {
     // For example:
-
+    history.addRecord(cmd_line);
     string cmd_s = string(cmd_line);
     if (cmd_s.find("pwd") == 0) {
         return new GetCurrDirCommand(cmd_line);
-    } else if (cmd_s.find("cd")) {
+    }
+    else if (cmd_s.find("cd") == 0) {
 
         char buffer[256];
         size_t s;
@@ -129,21 +149,21 @@ Command *SmallShell::CreateCommand(const char *cmd_line) {
         char **plast =&p;
         return new ChangeDirCommand(cmd_line, plast);
     }
-    else if (cmd_s.find("history"))
+    else if (cmd_s.find("history") == 0)
         return new HistoryCommand(cmd_line, &history);
-    else if (cmd_s.find("jobs"))
+    else if (cmd_s.find("jobs") == 0)
         return new JobsCommand(cmd_line, &jobs);
-    else if (cmd_s.find("kill"))
+    else if (cmd_s.find("kill") == 0)
         return new KillCommand(cmd_line, &jobs);
-    else if (cmd_s.find("showpid"))
+    else if (cmd_s.find("showpid") == 0)
         return new ShowPidCommand(cmd_line);
-    else if (cmd_s.find("fg"))
+    else if (cmd_s.find("fg") == 0)
         return new ForegroundCommand(cmd_line, &jobs);
-    else if (cmd_s.find("bg"))
+    else if (cmd_s.find("bg") == 0)
         return new BackgroundCommand(cmd_line, &jobs);
-    else if (cmd_s.find("quit"))
+    else if (cmd_s.find("quit") == 0)
         return new QuitCommand(cmd_line, &jobs);
-    else if (cmd_s.find("cp"))
+    else if (cmd_s.find("cp") == 0)
         return new CopyCommand(cmd_line);
     return nullptr;
 }
@@ -169,12 +189,15 @@ void CommandHistoryEntry::repeatCommand() {
 
 
 void CommandsHistory::addRecord(const char *cmd_line) {
-    if (history[top]->compareCommand(cmd_line) == 0)
-        history[top]->repeatCommand();
-    else
-        *history[top] = CommandHistoryEntry(seq, cmd_line);
-    if (top++ == 50)
-        top = 0;
+    if (capcitcy!=0 && history[top]->compareCommand(cmd_line) == 0)
+            history[top]->repeatCommand();
+    else {
+        if(capcitcy==49)
+            delete(history[top]);
+        if (top++ == 49)
+            top = 0;
+        history[top] = new CommandHistoryEntry(seq, cmd_line);
+    }
 
     seq++;
     if (capcitcy != 49)
@@ -183,12 +206,12 @@ void CommandsHistory::addRecord(const char *cmd_line) {
 }
 
 void CommandsHistory::printHistory() {
-    for (int i = top; i <= capcitcy; ++i) {
-        cout << history[i];
+    for (int i = top+1; i < capcitcy; ++i) {
+        cout << *history[i];
     }
 
-    for (int j = 0; j < top; ++j) {
-        cout << history[j];
+    for (int j = 0; j <= top; ++j) {
+        cout << *history[j];
     }
 }
 
@@ -198,8 +221,7 @@ GetCurrDirCommand::~GetCurrDirCommand() {}
 
 void GetCurrDirCommand::execute() {
     char cwd[256];
-    int size;
-    getcwd(cwd, size);
+    getwd(cwd);
     cout << cwd << endl;
 }
 
@@ -214,6 +236,7 @@ void HistoryCommand::execute() {
 
 
 KillCommand::KillCommand(const char *cmd_line, JobsList *jobs) : BuiltInCommand(cmd_line), jobs(jobs) {}
+KillCommand::~KillCommand(){}
 
 void KillCommand::execute() {
     if (argsNum < 3)
@@ -229,6 +252,7 @@ void KillCommand::execute() {
 
 
 ForegroundCommand::ForegroundCommand(const char *cmd_line, JobsList *jobj) : BuiltInCommand(cmd_line), jobs(jobj) {}
+ForegroundCommand::~ForegroundCommand(){}
 
 void ForegroundCommand::execute() {
     JobEntry *entry;
@@ -274,14 +298,14 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
     char** args;
     bool bkg=_isBackgroundComamnd(cmd_line);
-    char* cmd_line_copy=new char[100];
+    char* cmd_line_copy= (char*)malloc(100);
     strcpy(cmd_line_copy,cmd_line);
 
     if (bkg){
         _removeBackgroundSign(cmd_line_copy);
     }
 
-    Command clean_command = CreateCommand(cmd_line);
+    Command * clean_command = CreateCommand(cmd_line);
 
     int pid= 0;
     if (bkg) {
@@ -289,7 +313,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
         pid = fork();
     }
     if (pid == 0) //I'm the son (or foreground)
-        clean_command.execute();
+        clean_command->execute();
 
 
 
@@ -460,32 +484,6 @@ JobEntry * JobsList::getLastStoppedJob(int *jobId) {
 }
 // TODO: Add extra methods or modify exisitng ones as needed
 
-
-/*
-class CommandsHistory {
-protected:
-    class CommandHistoryEntry {
-        // TODO: Add your data members
-    };
-    // TODO: Add your data members
-public:
-    CommandsHistory();
-    ~CommandsHistory() {}
-    void addRecord(const char* cmd_line);
-    void printHistory();
-};
-*/
-
-
-
-/*
-GetCurrDirCommand::GetCurrDirCommand(const char* cmd_line){}
-    virtual ~GetCurrDirCommand() {}
-    void execute() override{
-        cout<< getcwd();
-    }
-};
-*/
 //DID they mean... past working directory? wtf is this
 ChangeDirCommand::ChangeDirCommand(const char *cmd_line, char **plastPwd) : BuiltInCommand(cmd_line), prevDir(*plastPwd){} //TODO: is this what they meant??
 ChangeDirCommand::~ChangeDirCommand() {}
@@ -494,41 +492,65 @@ void ChangeDirCommand::setPrevDir(char* d){
     prevDir = new char[(strlen(d))+1];
     strcpy(prevDir, d);
 }
-void ChangeDirCommand::execute(){
 
-    char pwd[256];
-    int length;
+void ChangeDirCommand::execute(){
     if(argsNum > 2){
         cout << "smash error: cd: too many arguments" << endl;
+        return;
     }
 
-    else{
-        if(args[0]=="-") {
-            if (prevDir == nullptr) {
-                cout << "smash error: cd: OLDPWD not set" << endl;
-            } else {
-                char* temp=prevDir;
-                setPrevDir(getcwd(pwd,length));
-                if(chdir(temp)<0){
-                    perror("smash error: chdir failed");
-                } //TODO: the structure must always hold the previous working directory
-            }
+    char pwd[256];
+    getwd(pwd);
+    if (strcmp(args[1], "..")==0){
+        char *result = (char*)malloc(strlen(pwd) + strlen("/..") + 1); // +1 for the null-terminator
+        // in real code you would check for errors in malloc here
+        strcpy(result, pwd);
+        strcat(result, "/..");
+
+        if(chdir(result)<0){
+            perror("smash error: chdir failed");
+            return;
         }
-        else{
-            setPrevDir(getcwd(pwd,length));
-            if(args[0]==".."){
-                if(chdir("/home")<0){
-                    perror("smash error: chdir failed");
-                }
-            }
-            else{
-                if(chdir(args[0])<0){
-                    perror("smash error: chdir failed");
-                }
-            }
+        free(result);
+
+    }
+    else if (strcmp(args[1], "~")==0) {
+        char *ptr = pwd;
+        int count = 0;
+        while (*ptr != '\0' && count != 2) {
+            if (*ptr == '/')
+                count++;
+            ptr++;
+
+        }
+        *ptr = '\0';
+        if (chdir(pwd) < 0) {
+            perror("smash error: chdir failed");
+            return;
         }
     }
+
+    else if (strcmp(args[1], "-")==0){
+        if (prevDir == nullptr) {
+                cout << "smash error: cd: OLDPWD not set" << endl;
+                return;
+        }
+
+        if(chdir(prevDir)<0){
+            perror("smash error: chdir failed");
+            return;
+        }
+    }else {
+        if(chdir(args[1])<0){
+            perror("smash error: chdir failed");
+            return;
+        }
+    }
+
+    setPrevDir(pwd); //TODO: change this function.
+
 }
+
 
 JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand (cmd_line), jobs(jobs){}
 JobsCommand::~JobsCommand() {}
@@ -586,7 +608,9 @@ void CopyCommand::execute(){
         cout<< "smash error: cp: invalid arguments" << endl; //TODO: WHAT IF THIS HAPPENS? PERROR?
     }
     char* buffer=new char[100];
-    char* readfile=args[1];
+    char pwd[256];
+//    char* readfile[strlen(args[1])+ strlen(getwd(pwd))+1];
+//    strcpy(readfile, args[1]);
     char* writefile=args[2];
     int fdread=open(readfile,O_RDONLY);
     int fdwrite=open(writefile, O_WRONLY);
