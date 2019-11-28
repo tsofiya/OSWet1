@@ -142,7 +142,6 @@ Command *SmallShell::CreateCommand(const char *cmd_line) {
         return new GetCurrDirCommand(cmd_line);
     }
     else if (cmd_s.find("cd") == 0) {
-
         char buffer[256];
         size_t s;
         char* p=(getcwd(buffer, s));
@@ -315,6 +314,8 @@ void SmallShell::executeCommand(const char *cmd_line) {
     if (pid == 0) //I'm the son (or foreground)
         clean_command->execute();
 
+    delete( clean_command);
+    free(cmd_line_copy);
 
 
     // for example:
@@ -603,40 +604,33 @@ void BackgroundCommand::execute() {
 CopyCommand::CopyCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
 CopyCommand::~CopyCommand() {}
 void CopyCommand::execute(){
-    int fd=0;
-    if (argsNum<3){
-        cout<< "smash error: cp: invalid arguments" << endl; //TODO: WHAT IF THIS HAPPENS? PERROR?
-    }
-    char* buffer=new char[100];
-    char pwd[256];
-//    char* readfile[strlen(args[1])+ strlen(getwd(pwd))+1];
-//    strcpy(readfile, args[1]);
-    char* writefile=args[2];
-    int fdread=open(readfile,O_RDONLY);
-    int fdwrite=open(writefile, O_WRONLY);
-    if(fdread==-1 || fdwrite==-1){
-        perror("smash error: open failed");
-        delete[](buffer);
-        return;
-    }
-    ssize_t s=read(fdread, buffer,90);
-    while (s!=0){
-        if(s==-1){
-            perror("smash error: read failed");
-            delete[](buffer);
-            return;
-        }
-        if(write(fdwrite,buffer,90)==-1){
-            perror("smash error: write failed");
-            delete[](buffer);
-            return;
-        }
-        s=read(fdread, buffer,90);
-    }
-    if(close(fdread)==-1 ||close(fdwrite)==-1){
-        perror("smash error: close failed");
-    }
-    delete[]buffer;
+//    int fd=0;
+//    if (argsNum<3){
+//        cout<< "smash error: cp: invalid arguments" << endl; //TODO: WHAT IF THIS HAPPENS? PERROR?
+//    }
+//    char* buf = new char[BUF_SIZE];
+//    char pwd[256];
+//    char *readfile=args[1];
+//    char* writefile= args[2];
+//    int fdread=open(readfile,O_RDONLY);
+//    int fdwrite=open(writefile, O_WRONLY|O_CREAT|O_TRUNC, 0666 );
+//    if(fdread==-1 || fdwrite==-1){
+//        perror("smash error: open failed");
+//        return;
+//    }
+//
+//    ssize_t numRead;
+//
+//    while ((numRead = read(fdread, buf, BUF_SIZE)) > 0)
+//         if (write(fdwrite, buf, numRead) != numRead)
+//            perror("couldn't write whole buffer");
+//
+//   close(fdread);
+//   close(fdwrite);
+//   delete[] buf;
+//
+
+
 }
 
 int CommandHistoryEntry::compareCommand(const char *comm) {

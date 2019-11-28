@@ -9,6 +9,10 @@
 #define COMMAND_MAX_ARGS (20)
 #define HISTORY_MAX_RECORDS (50)
 
+#ifndef BUF_SIZE
+#define BUF_SIZE 1024
+#endif
+
 typedef enum {
     BACKGROUND_JOB,
     STOPPED_JOB
