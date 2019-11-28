@@ -12,11 +12,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00de571c-81b1-4b68-8f00-b5732c1561fe" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/OSWet1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/OSWet1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Commands.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Commands.h" beforeDir="false" afterPath="$PROJECT_DIR$/Commands.h" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,6 +73,7 @@
       <workItem from="1574007732589" duration="1379000" />
       <workItem from="1574276929294" duration="3881000" />
       <workItem from="1574872194268" duration="596000" />
+      <workItem from="1574939827993" duration="594000" />
     </task>
     <task id="LOCAL-00001" summary="Merge branch 'clara-jobs' into pwd&#10;&#10;# Conflicts:&#10;#&#9;skeleton/.idea/skeleton.iml&#10;#&#9;skeleton/.idea/workspace.xml&#10;#&#9;skeleton/Commands.cpp">
       <created>1574341621263</created>

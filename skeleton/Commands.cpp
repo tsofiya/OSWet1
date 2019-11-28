@@ -29,6 +29,7 @@ using namespace std;
 
 
 
+
 const std::string WHITESPACE = " \n\r\t\f\v";
 string _ltrim(const std::string& s)
 {
@@ -63,14 +64,15 @@ int _parseCommandLine(const char* cmd_line, char** args) {
 }
 
 Command::Command(const char* cmd_line){
-    args= (char**)malloc(sizeof(char**));
+    args= (char**)malloc(COMMAND_MAX_ARGS*sizeof(char*));
     argsNum = _parseCommandLine(cmd_line, args);
 }
 
 Command::~Command(){
-    for (int i = 0; i < argsNum; ++i) {
+    for (int i = 0; i < COMMAND_MAX_ARGS; ++i) {
         free(args[i]);
     }
+    free(args);
 }
 
 BuiltInCommand::BuiltInCommand(const char* cmd_line):Command(cmd_line){}
@@ -188,19 +190,21 @@ void CommandHistoryEntry::repeatCommand() {
 
 
 void CommandsHistory::addRecord(const char *cmd_line) {
-    if (capcitcy!=0 && history[top]->compareCommand(cmd_line) == 0)
-            history[top]->repeatCommand();
+    if (capcitcy!=0 && history[top]->compareCommand(cmd_line) == 0) {
+        history[top]->repeatCommand();
+    }
     else {
-        if(capcitcy==49)
-            delete(history[top]);
         if (top++ == 49)
             top = 0;
+        if(capcitcy==49)
+            delete(history[top]);
         history[top] = new CommandHistoryEntry(seq, cmd_line);
+        if (capcitcy != 49)
+            capcitcy++;
     }
 
     seq++;
-    if (capcitcy != 49)
-        capcitcy++;
+
 
 }
 
@@ -314,7 +318,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
     if (pid == 0) //I'm the son (or foreground)
         clean_command->execute();
 
-    delete( clean_command);
+    //delete( clean_command);
     free(cmd_line_copy);
 
 
@@ -362,9 +366,6 @@ void JobsList::printJobsList() {
     }
 }
 
-
-
-
 void JobsList::killAllJobs(){
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
         // JobEntry current = iterator->data;
@@ -378,8 +379,6 @@ void JobsList::killAllJobs(){
     JobsNum=0;
 
 }
-
-
 
 void JobsList::removeFinishedJobs() {
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
@@ -604,33 +603,43 @@ void BackgroundCommand::execute() {
 CopyCommand::CopyCommand(const char* cmd_line): BuiltInCommand(cmd_line){}
 CopyCommand::~CopyCommand() {}
 void CopyCommand::execute(){
-//    int fd=0;
-//    if (argsNum<3){
-//        cout<< "smash error: cp: invalid arguments" << endl; //TODO: WHAT IF THIS HAPPENS? PERROR?
-//    }
-//    char* buf = new char[BUF_SIZE];
-//    char pwd[256];
-//    char *readfile=args[1];
-//    char* writefile= args[2];
-//    int fdread=open(readfile,O_RDONLY);
-//    int fdwrite=open(writefile, O_WRONLY|O_CREAT|O_TRUNC, 0666 );
-//    if(fdread==-1 || fdwrite==-1){
-//        perror("smash error: open failed");
-//        return;
-//    }
-//
-//    ssize_t numRead;
-//
-//    while ((numRead = read(fdread, buf, BUF_SIZE)) > 0)
-//         if (write(fdwrite, buf, numRead) != numRead)
-//            perror("couldn't write whole buffer");
-//
-//   close(fdread);
-//   close(fdwrite);
-//   delete[] buf;
-//
+    int fd=0;
+    if (argsNum<3){
+        cout<< "smash error: cp: invalid arguments" << endl; //TODO: WHAT IF THIS HAPPENS? PERROR?
+        return;
+    }
+    char buf[BUF_SIZE];
+    char pwd[256];
+    char *readfile=args[1];
+    char* writefile= args[2];
+    int fdread=open(readfile,O_RDONLY);
+    int fdwrite=open(writefile, O_WRONLY|O_CREAT|O_TRUNC, 0666 );
+    if(fdread==-1 || fdwrite==-1){
+        if (fdread!=-1)
+            close(fdread);
+        if (fdwrite!=-1)
+            close(fdwrite);
 
+        perror("smash error: open failed");
+        close(fdread);
+        return;
+    }
 
+    ssize_t numRead;
+
+    while ((numRead = read(fdread, buf, BUF_SIZE)) > 0)
+         if (write(fdwrite, buf, numRead) != numRead) {
+             perror("smash error: write failed");
+             close(fdread);
+             close(fdwrite);
+             return;
+         }
+
+    if (numRead<0)
+        perror("smash error: read failed");
+
+   close(fdread);
+   close(fdwrite);
 }
 
 int CommandHistoryEntry::compareCommand(const char *comm) {
