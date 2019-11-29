@@ -63,7 +63,7 @@ int _parseCommandLine(const char* cmd_line, char** args) {
     FUNC_EXIT()
 }
 
-Command::Command(const char* cmd_line):{
+Command::Command(const char* cmd_line){
     char** args;
     isBackGround =_isBackgroundComamnd(cmd_line);
     char* line= (char*)malloc(100);
@@ -313,16 +313,11 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
 /*class JobsList {
 public:
-
-
 private:
     BiDirectionalList<JobEntry> list;
     int JobsNum;
-
-
     // TODO: Add your data members
 public:
-
 */
 JobsList::JobsList(): JobsNum(0){
     list= std::vector<JobEntry>();
@@ -356,7 +351,7 @@ void JobsList::killAllJobs(){
         if (kill(currpid, 0)) {
             kill(currpid, 9);
         }//TODO: figure out when this would even be necessary
-       // JobsNum--;
+        // JobsNum--;
     }
     list.clear();
     JobsNum=0;
@@ -462,7 +457,6 @@ JobEntry * JobsList::getLastStoppedJob(int *jobId) {
          JobEntry current = iterator->data;
          return &current; //TODO: CAN I CHANGE THE RETURN TYPE OF A FUNCTION THEY DESIGNED?
      }
-
      */
 }
 // TODO: Add extra methods or modify exisitng ones as needed
@@ -515,8 +509,8 @@ void ChangeDirCommand::execute(){
 
     else if (strcmp(args[1], "-")==0){
         if (prevDir == nullptr) {
-                cout << "smash error: cd: OLDPWD not set" << endl;
-                return;
+            cout << "smash error: cd: OLDPWD not set" << endl;
+            return;
         }
 
         if(chdir(prevDir)<0){
@@ -611,18 +605,18 @@ void CopyCommand::execute(){
     ssize_t numRead;
 
     while ((numRead = read(fdread, buf, BUF_SIZE)) > 0)
-         if (write(fdwrite, buf, numRead) != numRead) {
-             perror("smash error: write failed");
-             close(fdread);
-             close(fdwrite);
-             return;
-         }
+        if (write(fdwrite, buf, numRead) != numRead) {
+            perror("smash error: write failed");
+            close(fdread);
+            close(fdwrite);
+            return;
+        }
 
     if (numRead<0)
         perror("smash error: read failed");
 
-   close(fdread);
-   close(fdwrite);
+    close(fdread);
+    close(fdwrite);
 }
 
 int CommandHistoryEntry::compareCommand(const char *comm) {
@@ -671,11 +665,12 @@ void ExternalCommand::execute(){
     int pid= fork();
     if (pid==0){//I'm the son
         if (isBashCommand) {
-            char* bashArgs[]={"bash", "-c", line, NULL};
-            execv("/bin/bash", bashArgs);
+            char* bashArgs[]={"/bin/bash", "-c", line, NULL};
+            execvp(bashArgs[0], bashArgs);
         }
         else{
-            execvp(args[0], args++);
+            char* bashArgs[]={"/bin/bash", line, NULL};
+            execvp(bashArgs[0], bashArgs);
         }
     }else{
         if (isBackGround){
