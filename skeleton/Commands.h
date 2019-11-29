@@ -9,6 +9,10 @@
 #define COMMAND_MAX_ARGS (20)
 #define HISTORY_MAX_RECORDS (50)
 
+#ifndef BUF_SIZE
+#define BUF_SIZE 1024
+#endif
+
 typedef enum {
     BACKGROUND_JOB,
     STOPPED_JOB
@@ -33,12 +37,12 @@ class JobEntry {
 private:
     int jobPID;
     int jobSeqID;
-    char* jobcommand;
+    std::string jobcommand;
     time_t jobAddingTime;
     JobStatus status;
 
 public:
-    JobEntry(int PID, int SeqID, char* command);
+    JobEntry(int PID, int SeqID, const char* command);
     ~JobEntry();
     void JobSetStatus(JobStatus s){
         status=s;
@@ -112,7 +116,8 @@ public:
 class ChangeDirCommand : public BuiltInCommand {
 
 private:
-    char* prevDir;
+    char** plastPwd;
+
 public:
 // TODO: Add your data members public:
     ChangeDirCommand(const char* cmd_line, char** plastPwd);
@@ -246,6 +251,8 @@ class SmallShell {
 private:
     CommandsHistory history;
     JobsList jobs;
+    char* plastPwd;
+
     // TODO: Add your data members
     SmallShell();
 public:
