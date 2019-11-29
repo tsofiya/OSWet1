@@ -63,7 +63,14 @@ int _parseCommandLine(const char* cmd_line, char** args) {
     FUNC_EXIT()
 }
 
-Command::Command(const char* cmd_line){
+Command::Command(const char* cmd_line):{
+    char** args;
+    isBackGround =_isBackgroundComamnd(cmd_line);
+    char* line= (char*)malloc(100);
+    strcpy(line,cmd_line);
+    if (isBackGround){
+        _removeBackgroundSign(line);
+    }
     args= (char**)malloc(COMMAND_MAX_ARGS*sizeof(char*));
     argsNum = _parseCommandLine(cmd_line, args);
 }
@@ -73,6 +80,7 @@ Command::~Command(){
         free(args[i]);
     }
     free(args);
+    free(line);
 }
 
 BuiltInCommand::BuiltInCommand(const char* cmd_line):Command(cmd_line){}
@@ -166,7 +174,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line) {
         return new QuitCommand(cmd_line, &jobs);
     else if (cmd_s.find("cp") == 0)
         return new CopyCommand(cmd_line);
-    return nullptr;
+    return new ExternalCommand(cmd_line, &jobs);
 }
 
 CommandHistoryEntry::CommandHistoryEntry(int seq, const char *comm) : seqNum(seq) {
@@ -298,34 +306,9 @@ void QuitCommand::execute() {
 
 void SmallShell::executeCommand(const char *cmd_line) {
     // TODO: Add your implementation here
-
-    char** args;
-    bool bkg=_isBackgroundComamnd(cmd_line);
-    char* cmd_line_copy= (char*)malloc(100);
-    strcpy(cmd_line_copy,cmd_line);
-
-    if (bkg){
-        _removeBackgroundSign(cmd_line_copy);
-    }
-
     Command * clean_command = CreateCommand(cmd_line);
-
-    int pid= 0;
-    if (bkg) {
-        //TODO: Update job into joblist
-        pid = fork();
-    }
-    if (pid == 0) //I'm the son (or foreground)
-        clean_command->execute();
-
-    //delete( clean_command);
-    free(cmd_line_copy);
-
-
-    // for example:
-    // Command* cmd = CreateCommand(cmd_line);
-    // cmd->execute();
-    // Please note that you must fork smash process for some commands (e.g., external commands....)
+    clean_command->execute();
+    //delete(clean_command);
 }
 
 /*class JobsList {
@@ -677,4 +660,30 @@ std::ostream& operator<<(std::ostream& os, const JobEntry& jobentry){
         cout << jobentry.jobSeqID << " " << jobentry.jobcommand << " : " << jobentry.jobPID << " " << secondsElapsed << endl;
     }
     return os;
+}
+
+ExternalCommand::ExternalCommand(const char* cmd_line, JobsList * jobs):Command(cmd_line), jobs(jobs){
+    string line(cmd_line);
+    isBashCommand= (line.find('*')==0) || (line.find('?')==0);
+}
+
+void ExternalCommand::execute(){
+    int pid= fork();
+    if (pid==0){//I'm the son
+        if (isBashCommand) {
+            char* bashArgs[]={"bash", "-c", line, NULL};
+            execv("/bin/bash", bashArgs);
+        }
+        else{
+            execvp(args[0], args++);
+        }
+    }else{
+        if (isBackGround){
+            jobs->addJob(pid,line ,false);
+        }
+        else {
+            int status;
+            waitpid(pid,&status,NULL);
+        }
+    }
 }
