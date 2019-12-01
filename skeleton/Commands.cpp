@@ -307,9 +307,9 @@ void QuitCommand::execute() {
 
 void SmallShell::executeCommand(const char *cmd_line) {
     // TODO: Add your implementation here
-    Command * clean_command = CreateCommand(cmd_line);
-    clean_command->execute();
-    //delete(clean_command);
+    currCommand= CreateCommand(cmd_line);
+    currCommand->execute();
+    delete(currCommand);
 }
 
 
@@ -681,8 +681,26 @@ void ExternalCommand::execute(){
             jobs->addJob(pid,line ,false);
         }
         else {
+            currentFgPID= pid;
             int status;
-            waitpid(pid,&status,NULL);
+            waitpid(pid,&status,WUNTRACED);
+            currentFgPID= -1;
         }
     }
+}
+
+int SmallShell::getCurrFg(){
+    return currCommand->getCurrFgPID();
+}
+
+int Command::getCurrFgPID(){
+    return currentFgPID;
+}
+
+void SmallShell::addStoppedJob(int pid){
+    jobs.addJob(pid, currCommand->getLine(), STOPPED_JOB);
+}
+
+char * Command::getLine(){
+    return line;
 }

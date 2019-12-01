@@ -24,7 +24,7 @@ protected:
     char* line;
     int argsNum;
     bool isBackGround;
-
+    int currentFgPID=-1;
 public:
     Command(const char* cmd_line);
     virtual ~Command();
@@ -32,6 +32,8 @@ public:
     //virtual void prepare();
     //virtual void cleanup();
     // TODO: Add your extra methods if needed
+    int getCurrFgPID();
+    char * getLine();
 };
 
 
@@ -258,7 +260,7 @@ private:
     CommandsHistory history;
     JobsList jobs;
     char* plastPwd;
-
+    Command* currCommand;
     // TODO: Add your data members
     SmallShell();
 public:
@@ -273,7 +275,9 @@ public:
     }
     ~SmallShell();
     void executeCommand(const char* cmd_line);
+    void addStoppedJob(int pid);
     // TODO: add extra methods as needed
+    int getCurrFg();
 };
 
 bool _isBackgroundComamnd(const char* cmd_line);

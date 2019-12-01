@@ -3,4 +3,4 @@ project(OS)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(OS smash.cpp Commands.h signals.h Commands.cpp )
+add_executable(OS smash.cpp Commands.h signals.h signals.cpp Commands.cpp )

@@ -13,9 +13,14 @@
   <component name="ChangeListManager">
     <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.h" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/cmake-build-debug/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/signals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/signals.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/smash.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/smash.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +75,16 @@
       <workItem from="1575013429592" duration="4652000" />
       <workItem from="1575031135432" duration="362000" />
       <workItem from="1575035168157" duration="228000" />
+      <workItem from="1575221012575" duration="2806000" />
     </task>
+    <task id="LOCAL-00001" summary="attempt">
+      <created>1575221230213</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1575221230213</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -98,6 +112,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="attempt" />
+    <option name="LAST_COMMIT_MESSAGE" value="attempt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

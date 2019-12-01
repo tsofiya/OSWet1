@@ -150,6 +150,33 @@ Commands.cpp.s:
 	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/Commands.cpp.s
 .PHONY : Commands.cpp.s
 
+signals.o: signals.cpp.o
+
+.PHONY : signals.o
+
+# target to build an object file
+signals.cpp.o:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/signals.cpp.o
+.PHONY : signals.cpp.o
+
+signals.i: signals.cpp.i
+
+.PHONY : signals.i
+
+# target to preprocess a source file
+signals.cpp.i:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/signals.cpp.i
+.PHONY : signals.cpp.i
+
+signals.s: signals.cpp.s
+
+.PHONY : signals.s
+
+# target to generate assembly for a file
+signals.cpp.s:
+	$(MAKE) -f CMakeFiles/OS.dir/build.make CMakeFiles/OS.dir/signals.cpp.s
+.PHONY : signals.cpp.s
+
 smash.o: smash.cpp.o
 
 .PHONY : smash.o
@@ -189,6 +216,9 @@ help:
 	@echo "... Commands.o"
 	@echo "... Commands.i"
 	@echo "... Commands.s"
+	@echo "... signals.o"
+	@echo "... signals.i"
+	@echo "... signals.s"
 	@echo "... smash.o"
 	@echo "... smash.i"
 	@echo "... smash.s"
