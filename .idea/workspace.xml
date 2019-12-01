@@ -13,7 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.h" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.h" afterDir="false" />
     </list>
@@ -102,12 +101,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>200</line>
+          <line>192</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>191</line>
+          <line>183</line>
           <option name="timeStamp" value="55" />
         </line-breakpoint>
       </breakpoints>

@@ -1,3 +1,4 @@
+
 #ifndef SMASH_COMMAND_H_
 #define SMASH_COMMAND_H_
 
@@ -17,6 +18,7 @@ typedef enum {
     BACKGROUND_JOB,
     STOPPED_JOB
 }JobStatus;
+
 
 class Command {
 protected:
@@ -40,12 +42,12 @@ class JobEntry {
 private:
     int jobPID;
     int jobSeqID;
-    char* jobcommand;
+    std::string jobcommand;
     time_t jobAddingTime;
     JobStatus status;
 
 public:
-    JobEntry(int PID, int SeqID, char* command);
+    JobEntry(int PID, int SeqID, const char* command);
     ~JobEntry();
     void JobSetStatus(JobStatus s){
         status=s;
@@ -122,7 +124,8 @@ public:
 class ChangeDirCommand : public BuiltInCommand {
 
 private:
-    char* prevDir;
+    char** plastPwd;
+
 public:
 // TODO: Add your data members public:
     ChangeDirCommand(const char* cmd_line, char** plastPwd);
@@ -209,7 +212,7 @@ private:
     // TODO: Add your data members
 public:
     JobsCommand(const char* cmd_line, JobsList* jobs);
-    virtual ~JobsCommand() ;
+    ~JobsCommand() ;
     void execute() override;
 };
 
@@ -256,6 +259,8 @@ class SmallShell {
 private:
     CommandsHistory history;
     JobsList jobs;
+    char* plastPwd;
+
     // TODO: Add your data members
     SmallShell();
 public:
@@ -272,6 +277,7 @@ public:
     void executeCommand(const char* cmd_line);
     // TODO: add extra methods as needed
 };
+
 
 bool _isBackgroundComamnd(const char* cmd_line);
 void _removeBackgroundSign(char* cmd_line);
