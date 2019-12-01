@@ -1,3 +1,4 @@
+
 #ifndef SMASH_COMMAND_H_
 #define SMASH_COMMAND_H_
 
@@ -18,10 +19,14 @@ typedef enum {
     STOPPED_JOB
 }JobStatus;
 
+
 class Command {
 protected:
     char ** args;
+    char* line;
     int argsNum;
+    bool isBackGround;
+
 public:
     Command(const char* cmd_line);
     virtual ~Command();
@@ -89,8 +94,11 @@ public:
 };
 
 class ExternalCommand : public Command {
+private:
+    bool isBashCommand;
+    JobsList * jobs;
 public:
-    ExternalCommand(const char* cmd_line);
+    ExternalCommand(const char* cmd_line, JobsList * jobs);
     virtual ~ExternalCommand() {}
     void execute() override;
 };
@@ -204,7 +212,7 @@ private:
     // TODO: Add your data members
 public:
     JobsCommand(const char* cmd_line, JobsList* jobs);
-    virtual ~JobsCommand() ;
+    ~JobsCommand() ;
     void execute() override;
 };
 
@@ -269,5 +277,9 @@ public:
     void executeCommand(const char* cmd_line);
     // TODO: add extra methods as needed
 };
+
+
+bool _isBackgroundComamnd(const char* cmd_line);
+void _removeBackgroundSign(char* cmd_line);
 
 #endif //SMASH_COMMAND_H_
