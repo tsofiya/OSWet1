@@ -29,6 +29,7 @@ using namespace std;
 
 
 
+
 const std::string WHITESPACE = " \n\r\t\f\v";
 string _ltrim(const std::string& s)
 {
@@ -69,10 +70,8 @@ Command::Command(const char* cmd_line){
     if (isBackGround){
         _removeBackgroundSign(line);
     }
-
     args= (char**)malloc(COMMAND_MAX_ARGS*sizeof(char*));
     argsNum = _parseCommandLine(cmd_line, args);
-
 }
 
 Command::~Command(){
@@ -152,11 +151,10 @@ Command *SmallShell::CreateCommand(const char *cmd_line) {
         return new GetCurrDirCommand(cmd_line);
     }
     else if (cmd_s.find("cd") == 0) {
-
         char buffer[256];
         size_t s;
-        // char* p=(getcwd(buffer, s));
-        //char **plast =&p;
+        //   char* p=(getcwd(buffer, s));
+        // char **plast =&p;
         return new ChangeDirCommand(cmd_line, &plastPwd);
     }
     else if (cmd_s.find("history") == 0)
@@ -203,10 +201,10 @@ void CommandsHistory::addRecord(const char *cmd_line) {
         history[top]->repeatCommand();
     }
     else {
-        if(capcitcy==49)
-            delete(history[top]);
         if (top++ == 49)
             top = 0;
+        if(capcitcy==49)
+            delete(history[top]);
         history[top] = new CommandHistoryEntry(seq, cmd_line);
         if (capcitcy != 49)
             capcitcy++;
@@ -312,7 +310,6 @@ void SmallShell::executeCommand(const char *cmd_line) {
     delete(currCommand);
 }
 
-
 JobsList::JobsList(): JobsNum(0){
     list= std::vector<JobEntry>();
 }
@@ -343,9 +340,6 @@ void JobsList::printJobsList() {
     }
 }
 
-
-
-
 void JobsList::killAllJobs(){
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
         // JobEntry current = iterator->data;
@@ -353,19 +347,18 @@ void JobsList::killAllJobs(){
         if (kill(currpid, 0)) {
             kill(currpid, 9);
         }//TODO: figure out when this would even be necessary
-       // JobsNum--;
+        // JobsNum--;
     }
     list.clear();
     JobsNum=0;
 
 }
 
-
-
 void JobsList::removeFinishedJobs() {
+    pid_t currpid;
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
         //JobEntry current = iterator->data;
-        pid_t currpid = iterator->getJobPID();
+        currpid = iterator->getJobPID();
         int* ptr;
         waitpid(currpid, ptr, WNOHANG);
         if(*ptr>0){//should be executed by father
@@ -450,7 +443,6 @@ JobEntry * JobsList::getLastStoppedJob(int *jobId) {
          JobEntry current = iterator->data;
          return &current; //TODO: CAN I CHANGE THE RETURN TYPE OF A FUNCTION THEY DESIGNED?
      }
-
      */
 }
 // TODO: Add extra methods or modify exisitng ones as needed
@@ -467,7 +459,6 @@ ChangeDirCommand::~ChangeDirCommand() {
     delete[](prevDir);
    prevDir = new char[(strlen(d))+1];
     strcpy(prevDir, d);
-
 }*/
 
 void ChangeDirCommand::execute(){
@@ -508,6 +499,7 @@ void ChangeDirCommand::execute(){
     }
 
     else if (strcmp(args[1], "-")==0){
+
         if (*plastPwd == nullptr) {
             cout << "smash error: cd: OLDPWD not set" << endl;
             return;
@@ -661,7 +653,7 @@ std::ostream& operator<<(std::ostream& os, const JobEntry& jobentry){
 }
 
 ExternalCommand::ExternalCommand(const char* cmd_line, JobsList * jobs):Command(cmd_line), jobs(jobs){
-    string line(cmd_line);
+    string line(cmd_line); //todo: problem?
     isBashCommand= (line.find('*')==0) || (line.find('?')==0);
 }
 
@@ -670,11 +662,11 @@ void ExternalCommand::execute(){
     if (pid==0){//I'm the son
         if (isBashCommand) {
             char* bashArgs[]={"/bin/bash", "-c", line, NULL};
-            execvp(bashArgs[0], bashArgs);
+            execv(bashArgs[0], bashArgs);
         }
         else{
-            char* bashArgs[]={"/bin/bash", line, NULL};
-            execvp(bashArgs[0], bashArgs);
+            char* bashArgs[]={"/bin/bash", "-c", line, NULL};
+            execv(bashArgs[0], bashArgs);
         }
     }else{
         if (isBackGround){
