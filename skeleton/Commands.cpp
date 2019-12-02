@@ -292,6 +292,8 @@ void ForegroundCommand::execute() {
 
     int pid = entry->getJobPID();
     std::cout<<entry->getJobCommandLine()<< " "<< entry->getJobPID()<< std::endl;
+    jobs->removeJobById(pid);
+    kill(pid, SIGCONT);
     waitpid(pid, NULL, NULL);
 
 }
@@ -301,8 +303,10 @@ QuitCommand::QuitCommand(const char *cmd_line, JobsList *j) : BuiltInCommand(cmd
 
 void QuitCommand::execute() {
     if (argsNum == 2) {
-        if (strcmp(args[1], "kill") == 0)
+        if (strcmp(args[1], "kill") == 0) {
+            jobs->removeFinishedJobs();
             jobs->killAllJobs();
+        }
     }
     raise(SIGKILL);
 }
@@ -350,9 +354,11 @@ void JobsList::printJobsList() {
 }
 
 void JobsList::killAllJobs(){
+    std::cout<< "sending SIGKILL signal to " << list.size() << " jobs: "<<std::endl;
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
         // JobEntry current = iterator->data;
         int currpid=iterator->getJobPID();
+        std::cout<< (iterator->getJobPID())<< ": " << iterator->getJobCommandLine()<< std::endl;
         if (kill(currpid, 0)) {
             kill(currpid, 9);
         }//TODO: figure out when this would even be necessary
@@ -366,9 +372,9 @@ void JobsList::killAllJobs(){
 bool JobsList::removeJobById(int jobId){
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
         if (iterator->getJobPID() == jobId) {
-            if(kill(jobId,0)){  //TODO: and else? could this even happen?
-                kill(jobId,SIGKILL);
-            }
+            //if(kill(jobId,0)){  //TODO: and else? could this even happen?
+            kill(jobId,SIGKILL);
+            // }
             list.erase(iterator);
             JobsNum--;
             return true;
@@ -588,6 +594,8 @@ void ShowPidCommand::execute(){
 BackgroundCommand::BackgroundCommand(const char* cmd_line, JobsList* jobs): BuiltInCommand(cmd_line), jobs(jobs){}
 BackgroundCommand::~BackgroundCommand() {}
 void BackgroundCommand::execute() {
+
+    jobs->removeFinishedJobs();
 
     JobEntry * je;
     int ID;
