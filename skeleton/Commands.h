@@ -1,3 +1,4 @@
+
 #ifndef SMASH_COMMAND_H_
 #define SMASH_COMMAND_H_
 
@@ -47,7 +48,7 @@ private:
     JobStatus status;
 
 public:
-    JobEntry(int PID, int SeqID, const char* command);
+    JobEntry(int PID, int SeqID, const char* command, JobStatus s);
     ~JobEntry();
     void JobSetStatus(JobStatus s){
         status=s;
@@ -58,6 +59,7 @@ public:
 
     JobStatus getJobStatus();
     int getJobSeqID();
+    std::string getJobCommandLine();
 
     friend std::ostream& operator<<(std::ostream& os, const JobEntry& jobentry);
 
@@ -78,9 +80,9 @@ public:
     void addJob(int pid, char* cmd, bool isStopped); //used to receive Command* cmd instead of char* cmd, but command is a virtual class...
     void printJobsList();
     void killAllJobs();
-    void removeFinishedJobs();
     JobEntry * getJobById(int jobId);
     bool removeJobById(int jobId);
+    void removeFinishedJobs();
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
     // TODO: Add extra methods or modify exisitng ones as needed
