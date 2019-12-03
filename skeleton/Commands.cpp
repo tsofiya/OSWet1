@@ -285,7 +285,6 @@ void ForegroundCommand::execute() {
     } else {
         id = atoi(args[1]);
         entry= jobs->getJobBySeqID(id);
-        //entry = jobs->getJobById(id);
         if (entry == NULL) {
             cout << "smash error: fg: job-id " << id << " does not exist" << endl;
             return;
@@ -294,26 +293,25 @@ void ForegroundCommand::execute() {
 
     int pid = entry->getJobPID();
     std::cout<<entry->getJobCommandLine()<< " "<< entry->getJobPID()<< std::endl;
-
+    char* temp2=(char*)malloc(entry->getJobCommandLine().length()+1);
+    strcpy(temp2, entry->getJobCommandLine().c_str());
+    char* temp=line;
+    line=temp2;
     jobs->removeStoppedJobByID(pid);
+
     currentFgPID=pid;
 
-    char* temp1 = (char*)malloc(strlen(line)+1);
-    strcpy(temp1, line); //temp1 holds copy of line
-    int n = entry->getJobCommandLine().length();
-    char* temp2=(char*)malloc(n); //temp 2 holds copy of real command line
 
-    strcpy(temp2, entry->getJobCommandLine().c_str());
-
-    //line=temp2;
-    strcpy(line,temp2);
     kill(pid, SIGCONT);
     waitpid(pid, NULL, WUNTRACED);//chagned this!!!
     currentFgPID=-1;
 
-    strcpy(line,temp1);
-    delete[]temp1;
+    line=temp;
+//    strcpy(line,temp1);
+//
+//    delete[]temp1;
     delete[]temp2;
+
 }
 
 
