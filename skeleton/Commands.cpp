@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <string>
 
 using namespace std;
 
@@ -283,7 +284,8 @@ void ForegroundCommand::execute() {
         }
     } else {
         id = atoi(args[1]);
-        entry = jobs->getJobById(id);
+        entry= jobs->getJobBySeqID(id);
+        //entry = jobs->getJobById(id);
         if (entry == NULL) {
             cout << "smash error: fg: job-id " << id << " does not exist" << endl;
             return;
@@ -293,14 +295,25 @@ void ForegroundCommand::execute() {
     int pid = entry->getJobPID();
     std::cout<<entry->getJobCommandLine()<< " "<< entry->getJobPID()<< std::endl;
 
-    std::cout<<"the PID we're bringing to foreground is..."<< pid << std::endl;
-
     jobs->removeStoppedJobByID(pid);
     currentFgPID=pid;
+
+    char* temp1 = (char*)malloc(strlen(line)+1);
+    strcpy(temp1, line); //temp1 holds copy of line
+    int n = entry->getJobCommandLine().length();
+    char* temp2=(char*)malloc(n); //temp 2 holds copy of real command line
+
+    strcpy(temp2, entry->getJobCommandLine().c_str());
+
+    //line=temp2;
+    strcpy(line,temp2);
     kill(pid, SIGCONT);
     waitpid(pid, NULL, WUNTRACED);//chagned this!!!
     currentFgPID=-1;
 
+    strcpy(line,temp1);
+    delete[]temp1;
+    delete[]temp2;
 }
 
 
@@ -342,7 +355,6 @@ int JobsList::findPID(int pid) {
 }
 
 void JobsList::addBack(int pid, char* cmd, JobStatus isStopped, int seqID){
-    std::cout<<"Got to add back!!!!"<< std::endl;
     auto i=list.begin();
     for ( i=list.begin(); i!=list.end();++i){
         if(i->getJobSeqID() > seqID){
@@ -363,7 +375,7 @@ int JobsList::getMaxJobID() {
 }
 
 void JobsList::addJob(int pid, char* cmd, bool isStopped = false){//used to receive Command* cmd instead of char* cmd, but command is a virtual class...
-    std::cout<<"Got to Add jobs...."<< std::endl;
+
     if (JobsNum>=100){
         return;
     }
@@ -374,7 +386,6 @@ void JobsList::addJob(int pid, char* cmd, bool isStopped = false){//used to rece
     int seq=findPID(pid);
     // printPIDS();
     if(seq){
-        std::cout<<"getting into the addback"<<std::endl;
         addBack(pid, cmd, STOPPED_JOB, seq);
     }
     else {
@@ -387,14 +398,7 @@ void JobsList::addJob(int pid, char* cmd, bool isStopped = false){//used to rece
 
 void JobsList::printJobsList() {
 
-//TODO: figure this shit out
-    // JobsList::removeFinishedJobs(); //MAYBE DELETE THIS, NOT NECESSARY
-    /*for(auto iterator = list.vector::begin(); iterator!=list.vector::end(); ++iterator) {
-         JobEntry current = *iterator;
-        std::cout << *iterator << std::endl; //TODO: FIX THIS...
-    */
     for(int i=0; i<list.size();i++){
-        std::cout<<"printing..."<<std::endl;
         std::cout<<list.at(i)<<std::endl;
 
     }
@@ -403,7 +407,6 @@ void JobsList::printJobsList() {
 void JobsList::killAllJobs(){
     std::cout<< "smash: sending SIGKILL signal to " << list.size() << " jobs:"<<std::endl;
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
-        // JobEntry current = iterator->data;
         int currpid=iterator->getJobPID();
         std::cout<< (iterator->getJobPID())<< ": " << iterator->getJobCommandLine()<< std::endl;
         if (kill(currpid, 0)) {
@@ -482,6 +485,14 @@ void JobsList::removeFinishedJobs() {
 
 }
 
+JobEntry* JobsList::getJobBySeqID(int sID){
+    for(int i=0; i<list.size();i++){
+        if (list.at(i).getJobSeqID()==sID){
+            return &(list.at(i));
+        }
+    }
+    return nullptr;
+}
 
 
 JobEntry * JobsList::getJobById(int jobId){ //used to return JobEntry* ... this ain't C, but would it be considered a mistake?
@@ -513,7 +524,7 @@ JobEntry * JobsList::getLastStoppedJob(int *jobId) {
     int i=list.size()-1;
     while(i >=0){
         if (list.at(i).getJobStatus() == STOPPED_JOB){
-            *jobId = (list.at(i).getJobPID());//TODO: update last job ID !!!!
+            *jobId = (list.at(i).getJobSeqID());//TODO: update last job ID !!!!
             return &(list.at(i));
         }
         i--;
@@ -644,12 +655,8 @@ void ChangeDirCommand::execute(){
 JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand (cmd_line), jobs(jobs){}
 JobsCommand::~JobsCommand() {}
 void JobsCommand::execute(){
-    std::cout<< "Removing Finished jobs..."<<std::endl;
     jobs->removeFinishedJobs();
-    std::cout<< "Removed Finished jobs!"<<std::endl;
-    std::cout<< "Printing jobs..."<<std::endl;
     jobs->printJobsList();
-    std::cout<< "Printed jobs!!!"<<std::endl;
 
 }
 
@@ -679,7 +686,7 @@ void BackgroundCommand::execute() {
             return;
         }
         else {
-            je = jobs->getJobById(ID);
+            je = jobs->getJobBySeqID(ID);
             if(!je){
                 cout << "smash error: bg: job-id " << ID << " does not exist" << endl;
                 return;
@@ -689,9 +696,10 @@ void BackgroundCommand::execute() {
                 return;
             }
         }
+        int pid=je->getJobPID();
         je->JobEntry::JobSetStatus(BACKGROUND_JOB);
         std::cout<<je->getJobCommandLine()<< " "<< je->getJobPID()<< std::endl;
-        kill(ID, SIGCONT);
+        kill(pid, SIGCONT);
     }
 
 }
@@ -750,9 +758,7 @@ ostream &operator<<(ostream &os, const CommandHistoryEntry &dt) {
 
 
 JobEntry::JobEntry(int PID, int SeqID, const char* command, JobStatus s):jobPID(PID), jobSeqID(SeqID), jobcommand(command){
-    /*  jobcommand = new char[(strlen(command))+1];
-      strcpy(jobcommand, command);
-      */
+
     status=s;
     jobAddingTime=time(NULL);
 }
@@ -799,7 +805,11 @@ void ExternalCommand::execute(){
     }else{
         if (isBackGround){
             jobs->removeFinishedJobs();
-            jobs->addJob(pid,line ,false);
+            char* original_line = (char*)malloc(strlen(line)+2);
+            strcpy(original_line,line);
+            strcat(original_line, "&");
+
+            jobs->addJob(pid,original_line ,false);
             jobs->removeFinishedJobs();
         }
         else {
@@ -822,9 +832,14 @@ int Command::getCurrFgPID(){
     return currentFgPID;
 }
 
-void SmallShell::addStoppedJob(int pid){
+
+
+
+void SmallShell::addStoppedJob(int pid) {
     jobs.addJob(pid, currCommand->getLine(), true);
+
 }
+
 
 char * Command::getLine(){
     return line;

@@ -65,6 +65,7 @@ public:
 
 };
 
+
 class JobsList {
 
 
@@ -84,6 +85,7 @@ public:
     void addJob(int pid, char* cmd, bool isStopped); //used to receive Command* cmd instead of char* cmd, but command is a virtual class...
     void printJobsList();
     void killAllJobs();
+    JobEntry* getJobBySeqID (int sID);
     JobEntry * getJobById(int jobId);
     bool removeJobById(int jobId);
     bool removeStoppedJobByID(int jobId);
@@ -274,6 +276,7 @@ private:
     JobsList jobs;
     char* plastPwd;
     Command* currCommand;
+    char* fg_backup;
     // TODO: Add your data members
     SmallShell();
 public:
@@ -289,6 +292,7 @@ public:
     ~SmallShell();
     void executeCommand(const char* cmd_line);
     void addStoppedJob(int pid);
+
     // TODO: add extra methods as needed
     int getCurrFg();
 };
