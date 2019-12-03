@@ -292,9 +292,14 @@ void ForegroundCommand::execute() {
 
     int pid = entry->getJobPID();
     std::cout<<entry->getJobCommandLine()<< " "<< entry->getJobPID()<< std::endl;
-    jobs->removeJobById(pid);
+
+    std::cout<<"the PID we're bringing to foreground is..."<< pid << std::endl;
+
+    jobs->removeStoppedJobByID(pid);
+    currentFgPID=pid;
     kill(pid, SIGCONT);
-    waitpid(pid, NULL, NULL);
+    waitpid(pid, NULL, WUNTRACED);//chagned this!!!
+    currentFgPID=-1;
 
 }
 
@@ -321,20 +326,62 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
 JobsList::JobsList(): JobsNum(0){
     list= std::vector<JobEntry>();
+    for (int i=0; i<=100;i++){
+        PIDS[i]=-2;
+    }
 }
 JobsList::~JobsList(){ }
 
+int JobsList::findPID(int pid) {
+    for(int  i=1; i<=100;i++){
+        if(PIDS[i]==pid){
+            return i;
+        }
+    }
+    return 0;
+}
+
+void JobsList::addBack(int pid, char* cmd, JobStatus isStopped, int seqID){
+    std::cout<<"Got to add back!!!!"<< std::endl;
+    auto i=list.begin();
+    for ( i=list.begin(); i!=list.end();++i){
+        if(i->getJobSeqID() > seqID){
+            break;
+        }
+    }
+    list.insert(i, (JobEntry(pid, seqID, cmd, isStopped))); //if it's a new job...
+}
+
+int JobsList::getMaxJobID() {
+    int max=1;
+    for (int i=1; i<=100;i++){
+        if (PIDS[i]!=-2){
+            max=i;
+        }
+    }
+    return max;
+}
+
 void JobsList::addJob(int pid, char* cmd, bool isStopped = false){//used to receive Command* cmd instead of char* cmd, but command is a virtual class...
+    std::cout<<"Got to Add jobs...."<< std::endl;
     if (JobsNum>=100){
         return;
     }
-    //JobEntry j = new JobEntry(pid, JobsNum+1,cmd);
     JobStatus status=BACKGROUND_JOB;
     if (isStopped){
         status= STOPPED_JOB;
     }
-    list.push_back(JobEntry(pid, (JobsNum+1),cmd, status));
-    //list.push_back(JobEntry(pid, JobsNum+1, cmd));  //not command, but the command itself as str, TODO: fix
+    int seq=findPID(pid);
+    // printPIDS();
+    if(seq){
+        std::cout<<"getting into the addback"<<std::endl;
+        addBack(pid, cmd, STOPPED_JOB, seq);
+    }
+    else {
+        // seq=getMaxJobID()+1;
+        list.push_back(JobEntry(pid, (JobsNum+1), cmd, status)); //if it's a new job...
+        PIDS[JobsNum+1]=pid;
+    }
     JobsNum++;
 }
 
@@ -354,7 +401,7 @@ void JobsList::printJobsList() {
 }
 
 void JobsList::killAllJobs(){
-    std::cout<< "sending SIGKILL signal to " << list.size() << " jobs: "<<std::endl;
+    std::cout<< "smash: sending SIGKILL signal to " << list.size() << " jobs:"<<std::endl;
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
         // JobEntry current = iterator->data;
         int currpid=iterator->getJobPID();
@@ -365,9 +412,26 @@ void JobsList::killAllJobs(){
         // JobsNum--;
     }
     list.clear();
+    for(int i=0; i<=100;i++){
+        PIDS[i]=-2;
+    }
     JobsNum=0;
 
 }
+
+
+bool JobsList::removeStoppedJobByID(int jobId) {
+    for (auto iterator = list.begin(); iterator!=list.end();++iterator){
+        if (iterator->getJobPID() == jobId) {
+            list.erase(iterator);
+            JobsNum--;
+            return true;
+        }
+    }
+    return false;
+
+}
+
 
 bool JobsList::removeJobById(int jobId){
     for (auto iterator = list.begin(); iterator!=list.end();++iterator){
@@ -375,6 +439,11 @@ bool JobsList::removeJobById(int jobId){
             //if(kill(jobId,0)){  //TODO: and else? could this even happen?
             kill(jobId,SIGKILL);
             // }
+            for(int i=1;i<101;i++){
+                if(PIDS[i]==jobId){
+                    PIDS[i]=-2;
+                }
+            }
             list.erase(iterator);
             JobsNum--;
             return true;
@@ -675,7 +744,7 @@ int CommandHistoryEntry::compareCommand(const char *comm) {
 }
 
 ostream &operator<<(ostream &os, const CommandHistoryEntry &dt) {
-    os << right << setw(5) << dt.seqNum << " " << dt.command << endl;
+    os << right << setw(5) << dt.seqNum << "  " << dt.command << endl;
     return os;
 }
 
@@ -725,9 +794,13 @@ void ExternalCommand::execute(){
             char* bashArgs[]={"/bin/bash", "-c", line, NULL};
             execv(bashArgs[0], bashArgs);
         }
+        setpgrp();
+
     }else{
         if (isBackGround){
+            jobs->removeFinishedJobs();
             jobs->addJob(pid,line ,false);
+            jobs->removeFinishedJobs();
         }
         else {
             currentFgPID= pid;

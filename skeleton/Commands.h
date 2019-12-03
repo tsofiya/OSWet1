@@ -71,20 +71,31 @@ class JobsList {
 private:
     std::vector<JobEntry> list;
     int JobsNum;
+    int PIDS[101];
 
 
     // TODO: Add your data members
 public:
     JobsList();
     ~JobsList();
+    int findPID(int pid);
+    void addBack(int pid, char* cmd, JobStatus isStopped, int seqID);
+    int getMaxJobID();
     void addJob(int pid, char* cmd, bool isStopped); //used to receive Command* cmd instead of char* cmd, but command is a virtual class...
     void printJobsList();
     void killAllJobs();
     JobEntry * getJobById(int jobId);
     bool removeJobById(int jobId);
+    bool removeStoppedJobByID(int jobId);
     void removeFinishedJobs();
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
+
+    void printPIDS(){
+        for (int i=0; i<101;i++){
+            std::cout << PIDS[i] << std::endl;
+        }
+    }
     // TODO: Add extra methods or modify exisitng ones as needed
 };
 
