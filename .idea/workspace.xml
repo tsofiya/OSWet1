@@ -13,8 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/smash.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/smash.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/Commands.h" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.h" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +99,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575489236254</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="more fixes">
+      <created>1575494103403</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1575494103403</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,32 +146,32 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/smash.cpp</url>
-          <line>23</line>
+          <line>22</line>
           <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.h</url>
-          <line>18</line>
+          <line>17</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>55</line>
+          <line>54</line>
           <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>591</line>
+          <line>615</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>592</line>
+          <line>616</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>73</line>
+          <line>72</line>
           <option name="timeStamp" value="71" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
