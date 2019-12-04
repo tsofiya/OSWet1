@@ -13,9 +13,9 @@ void ctrlZHandler(int sig_num) {
     if (fg!=-1){
         smash.addStoppedJob(fg);
         kill(fg, SIGSTOP);
-        std::cout<< "smash: process " << fg << " was stopped" << std::endl;
+        std::cout<< "\nsmash: process " << fg << " was stopped" << std::endl;
+        smash.UpdateFg();
     }
-
 
 }
 
@@ -26,6 +26,8 @@ void ctrlCHandler(int sig_num) {
     int fg= smash.getCurrFg();
     if (fg!=-1) {
         kill(fg, SIGKILL);
-        std::cout << "smash: process " << fg << " was killed" << std::endl;
+        std::cout << "\nsmash: process " << fg << " was killed" << std::endl;
+        smash.UpdateFg();
     }
+
 }

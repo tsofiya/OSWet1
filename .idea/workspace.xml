@@ -11,10 +11,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="attempt">
+    <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.h" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skeleton/signals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/signals.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -72,7 +73,7 @@
       <workItem from="1575221012575" duration="2806000" />
       <workItem from="1575229834216" duration="2853000" />
       <workItem from="1575486404698" duration="543000" />
-      <workItem from="1575486990631" duration="293000" />
+      <workItem from="1575486990631" duration="2023000" />
     </task>
     <task id="LOCAL-00001" summary="attempt">
       <created>1575221230213</created>
@@ -81,7 +82,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575221230213</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="fixed null fg">
+      <created>1575487468043</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1575487468043</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -112,7 +120,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="attempt" />
-    <option name="LAST_COMMIT_MESSAGE" value="attempt" />
+    <MESSAGE value="fixed null fg" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed null fg" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

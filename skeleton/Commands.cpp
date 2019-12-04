@@ -324,7 +324,7 @@ void QuitCommand::execute() {
             jobs->killAllJobs();
         }
     }
-    raise(SIGKILL);
+    exit(0);
 }
 
 
@@ -840,6 +840,11 @@ int Command::getCurrFgPID(){
 void SmallShell::addStoppedJob(int pid) {
     jobs.addJob(pid, currCommand->getLine(), true);
 
+}
+
+void SmallShell::UpdateFg() {
+    delete currCommand;
+    currCommand = NULL;
 }
 
 

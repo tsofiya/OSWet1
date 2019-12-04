@@ -280,6 +280,7 @@ private:
     // TODO: Add your data members
     SmallShell();
 public:
+    void UpdateFg();
     Command *CreateCommand(const char* cmd_line);
     SmallShell(SmallShell const&)      = delete; // disable copy ctor
     void operator=(SmallShell const&)  = delete; // disable = operator
