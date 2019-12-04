@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <time.h>
-#include "BidirectionalList.h"
 #include <sys/types.h>
 #include <fcntl.h>
 #include <pwd.h>
@@ -78,7 +77,9 @@ Command::Command(const char* cmd_line){
 
 Command::~Command(){
     for (int i = 0; i < argsNum; ++i) {
-        free(args[i]);
+        if (args[i]) {
+            free(args[i]);
+        }
     }
     free(args);
     free(line);
@@ -153,33 +154,46 @@ Command *SmallShell::CreateCommand(const char *cmd_line) {
     // For example:
     history.addRecord(cmd_line);
     string cmd_s = string(cmd_line);
-    if (cmd_s.find("pwd") == 0) {
-        return new GetCurrDirCommand(cmd_line);
+    char** A= (char**)malloc(COMMAND_MAX_ARGS*sizeof(char*));
+    int an = _parseCommandLine(cmd_line, A);
+    Command* c;
+
+    if (strcmp(A[0], "pwd") == 0) {
+        c= new GetCurrDirCommand(cmd_line);
     }
-    else if (cmd_s.find("cd") == 0) {
+    else if (strcmp(A[0], "cd") == 0) {
         char buffer[256];
         size_t s;
         //   char* p=(getcwd(buffer, s));
         // char **plast =&p;
-        return new ChangeDirCommand(cmd_line, &plastPwd);
+        c=new ChangeDirCommand(cmd_line, &plastPwd);
     }
-    else if (cmd_s.find("history") == 0)
-        return new HistoryCommand(cmd_line, &history);
-    else if (cmd_s.find("jobs") == 0)
-        return new JobsCommand(cmd_line, &jobs);
-    else if (cmd_s.find("kill") == 0)
-        return new KillCommand(cmd_line, &jobs);
-    else if (cmd_s.find("showpid") == 0)
-        return new ShowPidCommand(cmd_line);
-    else if (cmd_s.find("fg") == 0)
-        return new ForegroundCommand(cmd_line, &jobs);
-    else if (cmd_s.find("bg") == 0)
-        return new BackgroundCommand(cmd_line, &jobs);
-    else if (cmd_s.find("quit") == 0)
-        return new QuitCommand(cmd_line, &jobs);
-    else if (cmd_s.find("cp") == 0)
-        return new CopyCommand(cmd_line);
-    return new ExternalCommand(cmd_line, &jobs);
+    else if (strcmp(A[0], "history") == 0)
+        c= new HistoryCommand(cmd_line, &history);
+    else if (strcmp(A[0], "jobs") == 0)
+        c= new JobsCommand(cmd_line, &jobs);
+    else if (strcmp(A[0], "kill") == 0)
+        c= new KillCommand(cmd_line, &jobs);
+    else if (strcmp(A[0], "showpid") == 0)
+        c= new ShowPidCommand(cmd_line);
+    else if (strcmp(A[0], "fg") == 0)
+        c= new ForegroundCommand(cmd_line, &jobs);
+    else if (strcmp(A[0], "bg") == 0)
+        c= new BackgroundCommand(cmd_line, &jobs);
+    else if (strcmp(A[0], "quit") == 0)
+        c= new QuitCommand(cmd_line, &jobs);
+    else if (strcmp(A[0], "cp") == 0)
+        c= new CopyCommand(cmd_line);
+    else {
+        c= new ExternalCommand(cmd_line, &jobs);
+    }
+    for (int i = 0; i < an; ++i) {
+        if (A[i]) {
+            free(A[i]);
+        }
+    }
+    free(A);
+    return c;
 }
 
 CommandHistoryEntry::CommandHistoryEntry(int seq, const char *comm) : seqNum(seq) {
@@ -236,6 +250,7 @@ GetCurrDirCommand::GetCurrDirCommand(const char *cmd_line) : BuiltInCommand(cmd_
 GetCurrDirCommand::~GetCurrDirCommand() {}
 
 void GetCurrDirCommand::execute() {
+
     char cwd[256];
     getwd(cwd);
     cout << cwd << endl;
@@ -258,12 +273,19 @@ void KillCommand::execute() {
     if (argsNum < 3)
         cout << "smash error: kill: invalid arguments" << endl;
     else {
-        int id = atoi(args[1]);
-        if (jobs->removeJobById(id))
-            cout << "signal number " << id << " was sent to pid 30985" << endl;
-        else
-            cout << "smash error: kill: job-id" << id << " does not exist" << endl;
+        int id = atoi(args[2]);
+        int sig=-(atoi(args[1]));
+        if(sig<0 || sig>32){
+            cout << "smash error: kill: invalid arguments" << endl;
+
+        }
+        if (jobs->JobSendSignal(id, sig)) {
+            int PID = jobs->getJobBySeqID(id)->getJobPID();
+            cout << "signal number " << sig << " was sent to pid " << PID << endl;
+        }else
+            cout << "smash error: kill: job-id " << id << " does not exist" << endl;
     }
+    jobs->removeFinishedJobs();
 };
 
 
@@ -323,8 +345,10 @@ void QuitCommand::execute() {
             jobs->removeFinishedJobs();
             jobs->killAllJobs();
         }
+    } else {
+        exit(0);
+        raise(SIGKILL);
     }
-    exit(0);
 }
 
 
@@ -333,7 +357,6 @@ void SmallShell::executeCommand(const char *cmd_line) {
     currCommand= CreateCommand(cmd_line);
     currCommand->execute();
     delete(currCommand);
-    currCommand = NULL;
 }
 
 JobsList::JobsList(): JobsNum(0){
@@ -588,68 +611,73 @@ ChangeDirCommand::~ChangeDirCommand() {
     strcpy(prevDir, d);
 }*/
 
-void ChangeDirCommand::execute(){
-    if(argsNum > 2){
+void ChangeDirCommand::execute() {
+    if (argsNum > 2) {
         cout << "smash error: cd: too many arguments" << endl;
         return;
     }
-
-    char pwd[256];
-    getwd(pwd);
-    if (strcmp(args[1], "..")==0){
-        char *result = (char*)malloc(strlen(pwd) + strlen("/..") + 1); // +1 for the null-terminator
-        // in real code you would check for errors in malloc here
-        strcpy(result, pwd);
-        strcat(result, "/..");
-
-        if(chdir(result)<0){
-            perror("smash error: chdir failed");
-            return;
-        }
-        free(result);
+    if(argsNum<=1){
+        cout << "smash error: cd: invalid null arguments" << endl;
 
     }
-    else if (strcmp(args[1], "~")==0) {
-        char *ptr = pwd;
-        int count = 0;
-        while (*ptr != '\0' && count != 2) {
-            if (*ptr == '/')
-                count++;
-            ptr++;
+    if (argsNum > 1) {
+        char pwd[256];
+        getwd(pwd);
 
+        if (strcmp(args[1], "..") == 0) {
+            char *result = (char *) malloc((strlen(pwd) + strlen("/..") + 1)); // +1 for the null-terminator
+            // in real code you would check for errors in malloc here
+            strcpy(result, pwd);
+            strcat(result, "/..");
+
+            if (chdir(result) < 0) {
+                perror("smash error: chdir failed");
+                return;
+            }
+            free(result);
+
+        } else if (strcmp(args[1], "~") == 0) {
+            char *ptr = pwd;
+            int count = 0;
+            while (*ptr != '\0' && count != 2) {
+                if (*ptr == '/')
+                    count++;
+                ptr++;
+
+            }
+            *ptr = '\0';
+            if (chdir(pwd) < 0) {
+                perror("smash error: chdir failed");
+                return;
+            }
+        } else if (strcmp(args[1], "-") == 0) {
+
+            if (*plastPwd == nullptr) {
+                cout << "smash error: cd: OLDPWD not set" << endl;
+                return;
+            }
+
+            if (chdir(*plastPwd) < 0) {
+                perror("smash error: chdir failed");
+                return;
+            }
+        } else {
+            if (chdir(args[1]) < 0) {
+                perror("smash error: chdir failed");
+                return;
+            }
         }
-        *ptr = '\0';
-        if (chdir(pwd) < 0) {
-            perror("smash error: chdir failed");
-            return;
+
+        // setPrevDir(pwd); //TODO: change this function.
+        if(*plastPwd!=nullptr){
+            free(*plastPwd);
         }
+
+        *plastPwd = (char *) malloc(strlen(pwd) + 1);
+        strcpy(*plastPwd, pwd);
+
     }
-
-    else if (strcmp(args[1], "-")==0){
-
-        if (*plastPwd == nullptr) {
-            cout << "smash error: cd: OLDPWD not set" << endl;
-            return;
-        }
-
-        if(chdir(*plastPwd)<0){
-            perror("smash error: chdir failed");
-            return;
-        }
-    }else {
-        if(chdir(args[1])<0){
-            perror("smash error: chdir failed");
-            return;
-        }
-    }
-
-    // setPrevDir(pwd); //TODO: change this function.
-    free(*plastPwd);
-    *plastPwd=(char*)malloc(strlen(pwd)+1);
-    strcpy(*plastPwd,pwd);
-
 }
-
 
 JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand (cmd_line), jobs(jobs){}
 JobsCommand::~JobsCommand() {}
@@ -741,7 +769,7 @@ void CopyCommand::execute(){
 
     if (numRead<0)
         perror("smash error: read failed");
-
+    std::cout<<args[1]<<" was copied to "<<args[2]<<std::endl;
     close(fdread);
     close(fdwrite);
 }
@@ -824,9 +852,6 @@ void ExternalCommand::execute(){
 
 
 int SmallShell::getCurrFg(){
-    if (currCommand == NULL)
-        return  -1;
-
     return currCommand->getCurrFgPID();
 }
 
@@ -842,12 +867,18 @@ void SmallShell::addStoppedJob(int pid) {
 
 }
 
-void SmallShell::UpdateFg() {
-    delete currCommand;
-    currCommand = NULL;
-}
-
 
 char * Command::getLine(){
     return line;
+}
+
+bool JobsList::JobSendSignal(int id, int sig){
+    if(getJobBySeqID(id)== nullptr){
+        return false;
+    }
+    else{
+        int PID=getJobBySeqID(id)->getJobPID();
+        kill(sig,PID);
+    }
+    return true;
 }

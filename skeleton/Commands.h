@@ -4,7 +4,6 @@
 
 #include <vector>
 #include <cstring>
-#include "BidirectionalList.h"
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
@@ -92,6 +91,7 @@ public:
     void removeFinishedJobs();
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
+    bool JobSendSignal(int id, int sig);
 
     void printPIDS(){
         for (int i=0; i<101;i++){
@@ -275,12 +275,10 @@ private:
     CommandsHistory history;
     JobsList jobs;
     char* plastPwd;
-    Command* currCommand = NULL;
-    char* fg_backup;
+    Command* currCommand;
     // TODO: Add your data members
     SmallShell();
 public:
-    void UpdateFg();
     Command *CreateCommand(const char* cmd_line);
     SmallShell(SmallShell const&)      = delete; // disable copy ctor
     void operator=(SmallShell const&)  = delete; // disable = operator
