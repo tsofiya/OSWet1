@@ -357,6 +357,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
     currCommand= CreateCommand(cmd_line);
     currCommand->execute();
     delete(currCommand);
+    currCommand = NULL;
 }
 
 JobsList::JobsList(): JobsNum(0){
@@ -679,6 +680,7 @@ void ChangeDirCommand::execute() {
     }
 }
 
+
 JobsCommand::JobsCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand (cmd_line), jobs(jobs){}
 JobsCommand::~JobsCommand() {}
 void JobsCommand::execute(){
@@ -852,6 +854,9 @@ void ExternalCommand::execute(){
 
 
 int SmallShell::getCurrFg(){
+    if (currCommand == NULL)
+        return  -1;
+
     return currCommand->getCurrFgPID();
 }
 
@@ -865,6 +870,11 @@ int Command::getCurrFgPID(){
 void SmallShell::addStoppedJob(int pid) {
     jobs.addJob(pid, currCommand->getLine(), true);
 
+}
+
+void SmallShell::UpdateFg() {
+    delete currCommand;
+    currCommand = NULL;
 }
 
 
