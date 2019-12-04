@@ -11,16 +11,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="">
+    <list default="true" id="d9d33801-1f2d-4733-9cab-8796ce41dd50" name="Default Changelist" comment="attempt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/skeleton/Commands.h" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/Commands.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/cmake-build-debug/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/signals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/signals.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skeleton/smash.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/skeleton/smash.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,6 +70,9 @@
       <workItem from="1575031135432" duration="362000" />
       <workItem from="1575035168157" duration="228000" />
       <workItem from="1575221012575" duration="2806000" />
+      <workItem from="1575229834216" duration="2853000" />
+      <workItem from="1575486404698" duration="543000" />
+      <workItem from="1575486990631" duration="293000" />
     </task>
     <task id="LOCAL-00001" summary="attempt">
       <created>1575221230213</created>
@@ -127,28 +124,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.h</url>
-          <line>17</line>
+          <line>18</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>53</line>
+          <line>55</line>
           <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>464</line>
+          <line>591</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>465</line>
+          <line>592</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/skeleton/Commands.cpp</url>
-          <line>71</line>
+          <line>73</line>
           <option name="timeStamp" value="71" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/skeleton/signals.cpp</url>
+          <line>9</line>
+          <option name="timeStamp" value="73" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

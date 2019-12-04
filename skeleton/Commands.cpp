@@ -77,7 +77,7 @@ Command::Command(const char* cmd_line){
 }
 
 Command::~Command(){
-    for (int i = 0; i < COMMAND_MAX_ARGS; ++i) {
+    for (int i = 0; i < argsNum; ++i) {
         free(args[i]);
     }
     free(args);
@@ -333,6 +333,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
     currCommand= CreateCommand(cmd_line);
     currCommand->execute();
     delete(currCommand);
+    currCommand = NULL;
 }
 
 JobsList::JobsList(): JobsNum(0){
@@ -823,6 +824,9 @@ void ExternalCommand::execute(){
 
 
 int SmallShell::getCurrFg(){
+    if (currCommand == NULL)
+        return  -1;
+
     return currCommand->getCurrFgPID();
 }
 

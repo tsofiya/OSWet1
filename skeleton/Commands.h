@@ -275,7 +275,7 @@ private:
     CommandsHistory history;
     JobsList jobs;
     char* plastPwd;
-    Command* currCommand;
+    Command* currCommand = NULL;
     char* fg_backup;
     // TODO: Add your data members
     SmallShell();
